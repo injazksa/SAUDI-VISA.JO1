@@ -9,16 +9,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from 'sonner';
-import { ShieldCheck, User, Lock, ArrowRight, ArrowLeft } from 'lucide-react';
+import { ShieldCheck, Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const loginSchema = z.object({
-  username: z.string().min(3, { message: 'Username must be at least 3 characters.' }),
+  email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
 
 const Login: React.FC = () => {
-  const { signInWithUsername, signUpWithUsername } = useAuth();
+  const { signInWithEmail, signUpWithEmail } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { t, i18n } = useTranslation();
@@ -31,16 +31,16 @@ const Login: React.FC = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: '',
-      password: '',
-    },
-  });
+    email: '',
+    password: '',
+  },
+});
 
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     setLoading(true);
     const { error } = isLogin 
-      ? await signInWithUsername(values.username, values.password)
-      : await signUpWithUsername(values.username, values.password);
+      ? await signInWithEmail(values.email, values.password)
+      : await signUpWithEmail(values.email, values.password);
 
     if (error) {
       toast.error(error.message);
@@ -77,15 +77,15 @@ const Login: React.FC = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name="username"
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center space-x-2 rtl:space-x-reverse">
-                    <User size={16} className="text-muted-foreground" />
-                    <span>{t('common.username')}</span>
+                    <Mail size={16} className="text-muted-foreground" />
+                    <span>{t('common.email')}</span>
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter username" {...field} />
+                    <Input placeholder="Enter email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
