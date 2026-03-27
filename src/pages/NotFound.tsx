@@ -1,40 +1,47 @@
-import { Link } from "react-router-dom";
-import PageMeta from "@/components/common/PageMeta";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { Home, AlertTriangle } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-export default function NotFound() {
+const NotFound: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const isRtl = i18n.language === 'ar';
+
   return (
-    <>
-      <PageMeta title="Page Not Found" description="" />
-      <div className="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden z-1">
-        <div className="mx-auto w-full max-w-[242px] text-center sm:max-w-[472px]">
-          <h1 className="mb-8 font-bold text-gray-800 text-title-md dark:text-white/90 xl:text-title-2xl">
-            ERROR
-          </h1>
-
-          <img src="/images/error/404.svg" alt="404" className="dark:hidden" />
-          <img
-            src="/images/error/404-dark.svg"
-            alt="404"
-            className="hidden dark:block"
-          />
-
-          <p className="mt-10 mb-6 text-base text-gray-700 dark:text-gray-400 sm:text-lg">
-            The page may have been deleted or does not exist. Please check the
-            URL is correct.
-          </p>
-
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-3.5 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
-          >
-            Back to home
-          </Link>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-muted/20 px-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="text-center space-y-8"
+      >
+        <div className="flex items-center justify-center text-destructive">
+          <AlertTriangle size={100} strokeWidth={1.5} />
         </div>
-        {/* <!-- Footer --> */}
-        <p className="absolute text-sm text-center text-gray-500 -translate-x-1/2 bottom-6 left-1/2 dark:text-gray-400">
-          &copy; {new Date().getFullYear()}
-        </p>
-      </div>
-    </>
+        <div className="space-y-4">
+          <h1 className="text-6xl md:text-8xl font-black text-primary">404</h1>
+          <h2 className="text-2xl md:text-3xl font-bold text-muted-foreground">
+            {isRtl ? "الصفحة غير موجودة" : "Page Not Found"}
+          </h2>
+          <p className="text-lg text-muted-foreground/80 max-w-md mx-auto leading-relaxed">
+            {isRtl 
+              ? "نعتذر، الصفحة التي تبحث عنها قد تم نقلها أو حذفها أو لم تكن موجودة أبداً."
+              : "Sorry, the page you are looking for has been moved, deleted or never existed."
+            }
+          </p>
+        </div>
+        <Link to="/">
+          <Button size="lg" className="px-8 py-6 text-lg font-bold space-x-3 rtl:space-x-reverse" asChild>
+            <span>
+              <Home size={24} />
+              <span>{isRtl ? "العودة للرئيسية" : "Back to Home"}</span>
+            </span>
+          </Button>
+        </Link>
+      </motion.div>
+    </div>
   );
-}
+};
+
+export default NotFound;

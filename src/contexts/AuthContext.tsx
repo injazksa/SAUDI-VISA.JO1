@@ -1,9 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-// @ts-ignore
 import { supabase } from '@/db/supabase';
 import type { User } from '@supabase/supabase-js';
-// @ts-ignore
-import type { Profile } from '@/types/types';
+import type { Profile } from '@/types';
 import { toast } from 'sonner';
 
 export async function getProfile(userId: string): Promise<Profile | null> {
@@ -19,10 +17,12 @@ export async function getProfile(userId: string): Promise<Profile | null> {
   }
   return data;
 }
+
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
+  isAdmin: boolean;
   signInWithUsername: (username: string, password: string) => Promise<{ error: Error | null }>;
   signUpWithUsername: (username: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -35,6 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const isAdmin = profile?.role === 'admin';
 
   const refreshProfile = async () => {
     if (!user) {
@@ -63,7 +65,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       });
 
-    // In this function, do NOT use any await calls. Use `.then()` instead to avoid deadlocks.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -113,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signInWithUsername, signUpWithUsername, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, isAdmin, signInWithUsername, signUpWithUsername, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );
