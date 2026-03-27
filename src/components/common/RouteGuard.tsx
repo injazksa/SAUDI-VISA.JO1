@@ -14,14 +14,25 @@ export const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }
       const isPublicRoute = PUBLIC_ROUTES.some(route => 
         location.pathname === route || location.pathname.startsWith(route + '/')
       );
-      const isAdminRoute = location.pathname.startsWith('/admin') && location.pathname !== '/admin/login';
+      const isLoginPage = location.pathname === '/admin/login';
+      const isAdminRoute = location.pathname.startsWith('/admin') && !isLoginPage;
 
+      // 1. If user is NOT logged in and tries to access a private route
       if (!isPublicRoute && !user) {
         navigate('/admin/login', { state: { from: location } });
-      } else if (isAdminRoute && !isAdmin) {
+        return;
+      }
+
+      // 2. If user IS logged in and tries to access an admin route but is NOT an admin
+      if (isAdminRoute && user && !isAdmin) {
         navigate('/');
-      } else if (user && location.pathname === '/admin/login') {
+        return;
+      }
+
+      // 3. If user IS logged in and tries to access the login page
+      if (isLoginPage && user) {
         navigate('/admin');
+        return;
       }
     }
   }, [user, loading, location, navigate, isAdmin]);
