@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
-const PUBLIC_ROUTES = ['/', '/about', '/services', '/blog', '/news', '/contact', '/login'];
+const PUBLIC_ROUTES = ['/', '/about', '/services', '/blog', '/news', '/contact', '/tools', '/legal', '/admin/login'];
 
 export const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading, isAdmin } = useAuth();
@@ -17,11 +17,11 @@ export const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }
       const isAdminRoute = location.pathname.startsWith('/admin');
 
       if (!isPublicRoute && !user) {
-        navigate('/login', { state: { from: location } });
+        navigate('/admin/login', { state: { from: location } });
       } else if (isAdminRoute && !isAdmin) {
         navigate('/');
-      } else if (user && location.pathname === '/login') {
-        navigate('/');
+      } else if (user && location.pathname === '/admin/login') {
+        navigate('/admin');
       }
     }
   }, [user, loading, location, navigate, isAdmin]);

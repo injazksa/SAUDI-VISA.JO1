@@ -6,68 +6,104 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 140 30% 10%;
+    --foreground: 210 39% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 140 30% 10%;
+    --card-foreground: 210 39% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 140 30% 10%;
-    --primary: 150 100% 21%; /* Saudi Green */
+    --popover-foreground: 210 39% 10%;
+    --primary: 210 39% 17%; /* Navy Blue */
     --primary-foreground: 0 0% 100%;
-    --secondary: 40 50% 56%; /* Goldish */
-    --secondary-foreground: 140 30% 10%;
-    --muted: 150 10% 96%;
-    --muted-foreground: 140 10% 40%;
-    --accent: 40 50% 90%;
-    --accent-foreground: 150 100% 21%;
+    --secondary: 43 65% 53%; /* Gold */
+    --secondary-foreground: 0 0% 10%;
+    --muted: 210 10% 96%;
+    --muted-foreground: 210 10% 40%;
+    --accent: 43 65% 95%;
+    --accent-foreground: 210 39% 17%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 150 10% 90%;
-    --input: 150 10% 90%;
-    --ring: 150 100% 21%;
+    --border: 210 10% 90%;
+    --input: 210 10% 90%;
+    --ring: 210 39% 17%;
     --radius: 0.5rem;
-    --chart-1: 150 100% 21%;
-    --chart-2: 40 50% 56%;
-    --chart-3: 140 30% 30%;
+    --chart-1: 210 39% 17%;
+    --chart-2: 43 65% 53%;
+    --chart-3: 200 30% 30%;
     --chart-4: 30 100% 50%;
     --chart-5: 160 100% 40%;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 150 100% 21%;
+    --sidebar-primary: 210 39% 17%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 150 10% 95%;
-    --sidebar-accent-foreground: 150 100% 21%;
+    --sidebar-accent: 210 10% 95%;
+    --sidebar-accent-foreground: 210 39% 17%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 150 100% 21%;
+    --sidebar-ring: 210 39% 17%;
   }
 
   .dark {
-    --background: 140 30% 5%;
+    --background: 210 39% 5%;
     --foreground: 0 0% 98%;
-    --card: 140 30% 8%;
+    --card: 210 39% 8%;
     --card-foreground: 0 0% 98%;
-    --popover: 140 30% 8%;
+    --popover: 210 39% 8%;
     --popover-foreground: 0 0% 98%;
-    --primary: 150 100% 30%;
+    --primary: 210 39% 15%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 40 50% 46%;
+    --secondary: 43 65% 43%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 140 20% 15%;
-    --muted-foreground: 140 10% 70%;
-    --accent: 140 30% 12%;
+    --muted: 210 20% 15%;
+    --muted-foreground: 210 10% 70%;
+    --accent: 210 39% 12%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 140 20% 20%;
-    --input: 140 20% 20%;
-    --ring: 150 100% 30%;
-    --sidebar-background: 140 30% 8%;
+    --border: 210 20% 20%;
+    --input: 210 20% 20%;
+    --ring: 210 39% 30%;
+    --sidebar-background: 210 39% 8%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 150 100% 30%;
+    --sidebar-primary: 210 39% 15%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 140 30% 12%;
+    --sidebar-accent: 210 39% 12%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 140 20% 20%;
-    --sidebar-ring: 150 100% 30%;
+    --sidebar-border: 210 20% 20%;
+    --sidebar-ring: 210 39% 30%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html[dir="rtl"] {
+    font-family: 'Almarai', 'Tajawal', sans-serif;
+  }
+  html[dir="ltr"] {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .news-ticker {
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 40s linear infinite;
+  }
+  @keyframes ticker {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-100%, 0, 0); }
+  }
+  [dir="rtl"] .news-ticker {
+    padding-left: 0;
+    padding-right: 100%;
+    animation: ticker-rtl 40s linear infinite;
+  }
+  @keyframes ticker-rtl {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(100%, 0, 0); }
   }
 }
 

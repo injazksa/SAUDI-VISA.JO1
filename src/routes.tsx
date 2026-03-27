@@ -11,12 +11,22 @@ import News from '@/pages/News';
 import NewsDetail from '@/pages/NewsDetail';
 import Contact from '@/pages/Contact';
 import Login from '@/pages/Login';
+import VisaCalculator from '@/pages/tools/VisaCalculator';
+import SaudiAccreditation from '@/pages/tools/SaudiAccreditation';
+import SaudiAuth from '@/pages/tools/SaudiAuth';
+import RequiredDocuments from '@/pages/tools/RequiredDocuments';
+import ProfessionsDirectory from '@/pages/tools/ProfessionsDirectory';
+import LegalPage from '@/pages/LegalPage';
 import AdminDashboard from '@/pages/admin/Dashboard';
 import AdminServices from '@/pages/admin/Services';
 import AdminBlog from '@/pages/admin/Blog';
 import AdminNews from '@/pages/admin/News';
 import AdminSettings from '@/pages/admin/Settings';
 import AdminContact from '@/pages/admin/Contact';
+import AdminFaqs from '@/pages/admin/Faqs';
+import AdminProfessions from '@/pages/admin/Professions';
+import AdminUsers from '@/pages/admin/Users';
+import AdminNationalities from '@/pages/admin/Nationalities';
 import NotFound from '@/pages/NotFound';
 
 export const routes: RouteObject[] = [
@@ -33,7 +43,13 @@ export const routes: RouteObject[] = [
       { path: 'news', element: <News /> },
       { path: 'news/:slug', element: <NewsDetail /> },
       { path: 'contact', element: <Contact /> },
-      { path: 'login', element: <Login /> },
+      { path: 'tools/visa-calculator', element: <VisaCalculator /> },
+      { path: 'tools/saudi-accreditation', element: <SaudiAccreditation /> },
+      { path: 'tools/saudi-auth', element: <SaudiAuth /> },
+      { path: 'tools/required-documents', element: <RequiredDocuments /> },
+      { path: 'tools/professions', element: <ProfessionsDirectory /> },
+      { path: 'legal/:slug', element: <LegalPage /> },
+      { path: 'admin/login', element: <Login /> }, // Hidden login path
     ],
   },
   {
@@ -46,6 +62,10 @@ export const routes: RouteObject[] = [
       { path: 'news', element: <AdminNews /> },
       { path: 'settings', element: <AdminSettings /> },
       { path: 'contact', element: <AdminContact /> },
+      { path: 'faqs', element: <AdminFaqs /> },
+      { path: 'professions', element: <AdminProfessions /> },
+      { path: 'users', element: <AdminUsers /> },
+      { path: 'nationalities', element: <AdminNationalities /> },
     ],
   },
   { path: '/404', element: <NotFound /> },

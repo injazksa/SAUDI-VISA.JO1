@@ -103,6 +103,8 @@ const MainLayout: React.FC = () => {
   const contactInfo = config?.contact_info;
   const newsTickerItems = i18n.language === 'ar' ? config?.news_ticker_ar : config?.news_ticker_en;
 
+  const whatsappNumber = contactInfo?.whatsapp?.replace(/\s/g, '') || "962789881009";
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* News Ticker */}
@@ -138,23 +140,6 @@ const MainLayout: React.FC = () => {
               <Globe size={18} />
               <span>{i18n.language === 'ar' ? 'English' : 'عربي'}</span>
             </Button>
-
-            {isAdmin && (
-              <Link to="/admin">
-                <Button variant="outline" size="sm" asChild><span>{t('nav.admin')}</span></Button>
-              </Link>
-            )}
-
-            {user ? (
-              <Button variant="ghost" size="sm" onClick={signOut}>
-                <LogOut size={18} className="mr-2 rtl:ml-2" />
-                {t('common.logout')}
-              </Button>
-            ) : (
-              <Link to="/login">
-                <Button size="sm" asChild><span>{t('common.login')}</span></Button>
-              </Link>
-            )}
           </div>
 
           {/* Mobile Menu Trigger */}
@@ -182,21 +167,6 @@ const MainLayout: React.FC = () => {
                       {link.name}
                     </Link>
                   ))}
-                  {isAdmin && (
-                    <Link to="/admin" className="text-lg font-medium text-primary">
-                      {t('nav.admin')}
-                    </Link>
-                  )}
-                  {user ? (
-                    <button onClick={signOut} className="text-lg font-medium text-muted-foreground flex items-center">
-                       <LogOut size={18} className="mr-2 rtl:ml-2" />
-                       {t('common.logout')}
-                    </button>
-                  ) : (
-                    <Link to="/login" className="text-lg font-medium text-primary">
-                      {t('common.login')}
-                    </Link>
-                  )}
                 </nav>
               </SheetContent>
             </Sheet>
@@ -217,6 +187,10 @@ const MainLayout: React.FC = () => {
             <p className="text-muted-foreground text-sm max-w-xs mx-auto md:mx-0">
               {i18n.language === 'ar' ? config?.hero_ar.subtitle : config?.hero_en.subtitle}
             </p>
+            <div className="text-xs text-muted-foreground pt-2">
+               <p>{i18n.language === 'ar' ? "الشركة المتخصصة للتوظيف" : "Specialized Recruitment Company"}</p>
+               <p>{i18n.language === 'ar' ? "ترخيص رقم 22128" : "License No. 22128"}</p>
+            </div>
           </div>
           <div>
             <h4 className="text-lg font-bold mb-4">{t('contact.info')}</h4>
@@ -227,7 +201,7 @@ const MainLayout: React.FC = () => {
               </li>
               <li className="flex items-center justify-center md:justify-start space-x-2 rtl:space-x-reverse">
                 <Mail size={16} />
-                <span>{contactInfo?.email}</span>
+                <span>{contactInfo?.email_visa}</span>
               </li>
               <li className="flex items-center justify-center md:justify-start space-x-2 rtl:space-x-reverse">
                 <MapPin size={16} />
@@ -236,22 +210,21 @@ const MainLayout: React.FC = () => {
             </ul>
           </div>
           <div>
-            <h4 className="text-lg font-bold mb-4">{t('nav.services')}</h4>
+            <h4 className="text-lg font-bold mb-4">{i18n.language === 'ar' ? 'روابط هامة' : 'Important Links'}</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/services">{t('nav.services')}</Link></li>
-              <li><Link to="/about">{t('nav.about')}</Link></li>
-              <li><Link to="/blog">{t('nav.blog')}</Link></li>
-              <li><Link to="/news">{t('nav.news')}</Link></li>
+              <li><Link to="/legal/terms-of-use">{i18n.language === 'ar' ? 'شروط الاستخدام' : 'Terms of Use'}</Link></li>
+              <li><Link to="/legal/privacy-policy">{i18n.language === 'ar' ? 'سياسة الخصوصية' : 'Privacy Policy'}</Link></li>
+              <li><Link to="/legal/disclaimer">{i18n.language === 'ar' ? 'إخلاء المسؤولية' : 'Disclaimer'}</Link></li>
             </ul>
           </div>
         </div>
         <div className="container mx-auto px-4 mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-          © 2026 Saudiavisa. All rights reserved.
+          © 2026 Saudiavisa. {i18n.language === 'ar' ? "جميع الحقوق محفوظة." : "All rights reserved."}
         </div>
       </footer>
 
       {/* Floating Buttons */}
-      <WhatsAppButton phone={contactInfo?.whatsapp || "0789881009"} />
+      <WhatsAppButton phone={whatsappNumber} />
       <ScrollToTop />
     </div>
   );

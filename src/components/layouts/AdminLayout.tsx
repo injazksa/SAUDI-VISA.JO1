@@ -10,29 +10,30 @@ import {
   Mail, 
   LogOut, 
   Home,
-  User,
-  ChevronRight,
-  ChevronLeft
+  HelpCircle,
+  UserCheck,
+  Globe,
+  Users
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
 
 const AdminLayout: React.FC = () => {
   const { profile, signOut, isAdmin } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
-
-  const isRtl = i18n.language === 'ar';
 
   const menuItems = [
-    { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-    { name: 'Services', path: '/admin/services', icon: Briefcase },
-    { name: 'Blog', path: '/admin/blog', icon: FileText },
-    { name: 'News', path: '/admin/news', icon: Newspaper },
-    { name: 'Settings', path: '/admin/settings', icon: Settings },
-    { name: 'Contact Submissions', path: '/admin/contact', icon: Mail },
+    { name: 'لوحة القيادة', path: '/admin', icon: LayoutDashboard },
+    { name: 'الخدمات', path: '/admin/services', icon: Briefcase },
+    { name: 'المدونة', path: '/admin/blog', icon: FileText },
+    { name: 'الأخبار', path: '/admin/news', icon: Newspaper },
+    { name: 'الأسئلة الشائعة', path: '/admin/faqs', icon: HelpCircle },
+    { name: 'المهن والرموز', path: '/admin/professions', icon: UserCheck },
+    { name: 'الجنسيات', path: '/admin/nationalities', icon: Globe },
+    { name: 'المستخدمين', path: '/admin/users', icon: Users },
+    { name: 'الرسائل', path: '/admin/contact', icon: Mail },
+    { name: 'الإعدادات', path: '/admin/settings', icon: Settings },
   ];
 
   if (!isAdmin) {
@@ -40,46 +41,44 @@ const AdminLayout: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-muted/30">
+    <div className="flex h-screen bg-muted/30 font-arabic" dir="rtl">
       {/* Sidebar */}
-      <aside className={cn(
-        "w-64 bg-background border-r flex flex-col transition-all duration-300",
-        isRtl ? "border-l border-r-0" : ""
-      )}>
-        <div className="p-6 border-b">
-          <h1 className="text-xl font-bold text-primary truncate">Admin Panel</h1>
+      <aside className="w-64 bg-primary text-white flex flex-col transition-all duration-300 shadow-2xl">
+        <div className="p-8 border-b border-white/10">
+          <h1 className="text-2xl font-black text-secondary truncate">لوحة التحكم</h1>
+          <p className="text-xs text-white/50 mt-1">إدارة مكتب تأشيرات السعودية</p>
         </div>
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {menuItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
               className={cn(
-                "flex items-center space-x-3 rtl:space-x-reverse p-3 rounded-md transition-colors",
+                "flex items-center space-x-3 rtl:space-x-reverse p-4 rounded-xl transition-all duration-200 group",
                 location.pathname === item.path 
-                  ? "bg-primary text-primary-foreground" 
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-secondary text-primary font-bold shadow-lg" 
+                  : "text-white/70 hover:bg-white/10 hover:text-white"
               )}
             >
-              <item.icon size={20} />
-              <span className="font-medium text-sm">{item.name}</span>
+              <item.icon size={22} className={cn(location.pathname === item.path ? "text-primary" : "text-secondary group-hover:text-white")} />
+              <span className="text-sm">{item.name}</span>
             </Link>
           ))}
         </nav>
-        <div className="p-4 border-t space-y-2">
-          <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse p-3 text-muted-foreground hover:bg-muted rounded-md text-sm">
+        <div className="p-6 border-t border-white/10 space-y-3">
+          <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse p-3 text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-all text-sm">
             <Home size={20} />
-            <span>Go to Site</span>
+            <span>عرض الموقع</span>
           </Link>
           <button 
             onClick={() => {
               signOut();
-              navigate('/login');
+              navigate('/admin/login');
             }}
-            className="w-full flex items-center space-x-3 rtl:space-x-reverse p-3 text-destructive hover:bg-destructive/10 rounded-md text-sm"
+            className="w-full flex items-center space-x-3 rtl:space-x-reverse p-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all text-sm"
           >
             <LogOut size={20} />
-            <span>Sign Out</span>
+            <span>تسجيل الخروج</span>
           </button>
         </div>
       </aside>
@@ -87,21 +86,26 @@ const AdminLayout: React.FC = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Topbar */}
-        <header className="h-16 bg-background border-b flex items-center justify-between px-8">
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-             <span className="text-sm font-medium text-muted-foreground">Welcome,</span>
-             <span className="text-sm font-bold text-foreground">{profile?.email}</span>
+        <header className="h-20 bg-white border-b flex items-center justify-between px-10 shadow-sm">
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
+             <div className="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center text-primary">
+                <Globe size={20} />
+             </div>
+             <div>
+                <span className="text-sm font-medium text-muted-foreground block">مرحباً بك،</span>
+                <span className="text-sm font-bold text-primary">{profile?.email}</span>
+             </div>
           </div>
-          <div className="flex items-center space-x-4">
-             <Button variant="outline" size="sm" onClick={() => i18n.changeLanguage(isRtl ? 'en' : 'ar')}>
-               {isRtl ? 'EN' : 'AR'}
-             </Button>
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
+             <div className="px-4 py-2 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-xs font-black">
+                مدير النظام
+             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-8">
-          <div className="container mx-auto">
+        <main className="flex-1 overflow-y-auto p-10 bg-[#f8fafc]">
+          <div className="max-w-7xl mx-auto">
             <Outlet />
           </div>
         </main>

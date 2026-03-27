@@ -25,7 +25,7 @@ const Login: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const from = (location.state as any)?.from?.pathname || '/';
+  const from = (location.state as any)?.from?.pathname || '/admin';
   const isRtl = i18n.language === 'ar';
 
   const form = useForm<z.infer<typeof loginSchema>>({

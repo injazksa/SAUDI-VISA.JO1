@@ -1,21 +1,11 @@
-export type UserRole = 'user' | 'admin';
-
-export interface Profile {
+export type Profile = {
   id: string;
   email: string;
-  phone?: string;
-  role: UserRole;
+  role: 'admin' | 'user';
   created_at: string;
-}
+};
 
-export interface Settings {
-  id: string;
-  key: string;
-  value: any;
-  updated_at: string;
-}
-
-export interface Service {
+export type Service = {
   id: string;
   title_ar: string;
   title_en: string;
@@ -24,86 +14,112 @@ export interface Service {
   requirements_ar?: string;
   requirements_en?: string;
   fees?: string;
-  image_url?: string;
   slug: string;
   is_featured: boolean;
+  image_url?: string;
   created_at: string;
-}
+};
 
-export interface BlogPost {
+export type BlogPost = {
   id: string;
   title_ar: string;
   title_en: string;
   content_ar: string;
   content_en: string;
-  excerpt_ar?: string;
-  excerpt_en?: string;
-  image_url?: string;
+  excerpt_ar: string;
+  excerpt_en: string;
   slug: string;
-  meta_title_ar?: string;
-  meta_title_en?: string;
-  meta_desc_ar?: string;
-  meta_desc_en?: string;
-  keywords_ar?: string;
-  keywords_en?: string;
+  image_url: string;
+  author_id: string;
   created_at: string;
-}
+};
 
-export interface NewsItem {
+export type NewsItem = {
   id: string;
   title_ar: string;
   title_en: string;
   content_ar: string;
   content_en: string;
-  excerpt_ar?: string;
-  excerpt_en?: string;
-  image_url?: string;
+  excerpt_ar: string;
+  excerpt_en: string;
   slug: string;
-  meta_title_ar?: string;
-  meta_title_en?: string;
-  meta_desc_ar?: string;
-  meta_desc_en?: string;
+  image_url: string;
   created_at: string;
-}
+};
 
-export interface ContactSubmission {
+export type ContactSubmission = {
   id: string;
   name: string;
   email: string;
+  subject: string;
   message: string;
+  status: 'pending' | 'read' | 'replied';
   created_at: string;
-}
+};
 
-export interface SiteConfig {
+export type SiteConfig = {
+  id: string;
   logo_url: string;
-  hero_ar: {
-    title: string;
-    subtitle: string;
-    cta_text: string;
-    image_url: string;
-  };
-  hero_en: {
-    title: string;
-    subtitle: string;
-    cta_text: string;
-    image_url: string;
-  };
+  site_title_ar: string;
+  site_title_en: string;
+  hero_ar: { title: string; subtitle: string; cta_text: string };
+  hero_en: { title: string; subtitle: string; cta_text: string };
   contact_info: {
     phone: string;
-    email: string;
-    support_email: string;
-    info_email: string;
+    whatsapp: string;
+    email_visa: string;
+    email_support: string;
+    email_info: string;
     address_ar: string;
     address_en: string;
-    whatsapp: string;
+    google_maps_url: string;
   };
   news_ticker_ar: string[];
   news_ticker_en: string[];
-}
+  updated_at: string;
+};
 
-export interface Option {
-  label: string;
-  value: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  withCount?: boolean;
-}
+export type Nationality = {
+  id: string;
+  name_ar: string;
+  name_en: string;
+  created_at: string;
+};
+
+export type Profession = {
+  id: string;
+  name_ar: string;
+  name_en: string;
+  code: string;
+  created_at: string;
+};
+
+export type FAQ = {
+  id: string;
+  question_ar: string;
+  question_en: string;
+  answer_ar: string;
+  answer_en: string;
+  display_order: number;
+  created_at: string;
+};
+
+export type Testimonial = {
+  id: string;
+  author_ar: string;
+  author_en: string;
+  content_ar: string;
+  content_en: string;
+  rating: number;
+  created_at: string;
+};
+
+export type LegalPage = {
+  id: string;
+  slug: string;
+  title_ar: string;
+  title_en: string;
+  content_ar: string;
+  content_en: string;
+  updated_at: string;
+};
