@@ -24,13 +24,16 @@ const NewsTicker = ({ items }: { items: string[] }) => {
   );
 };
 
-const WhatsAppButton = ({ phone }: { phone: string }) => {
+const WhatsAppButton = ({ phone, isRtl }: { phone: string; isRtl: boolean }) => {
   return (
     <a
       href={`https://wa.me/${phone}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform flex items-center justify-center"
+      className={cn(
+        "fixed bottom-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform flex items-center justify-center",
+        isRtl ? "left-6" : "right-6"
+      )}
       aria-label="Contact on WhatsApp"
     >
       <MessageCircle size={24} />
@@ -38,7 +41,7 @@ const WhatsAppButton = ({ phone }: { phone: string }) => {
   );
 };
 
-const ScrollToTop = () => {
+const ScrollToTop = ({ isRtl }: { isRtl: boolean }) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -66,7 +69,8 @@ const ScrollToTop = () => {
       variant="secondary"
       size="icon"
       className={cn(
-        "fixed bottom-24 right-6 z-50 rounded-full shadow-lg transition-opacity duration-300",
+        "fixed bottom-24 z-50 rounded-full shadow-lg transition-opacity duration-300",
+        isRtl ? "left-6" : "right-6",
         visible ? "opacity-100" : "opacity-0 pointer-events-none"
       )}
       onClick={scrollToTop}
@@ -113,10 +117,19 @@ const MainLayout: React.FC = () => {
       {/* Header */}
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-primary">
-              {config?.logo_url || "⚡ Saudiavisa"}
-            </span>
+          <Link to="/" className="flex items-center gap-2">
+            {config?.logo_image ? (
+              <img src={config.logo_image} alt="Saudiavisa Logo" className="h-10 md:h-12 w-auto" />
+            ) : (
+              <div className="flex items-center gap-2">
+                 <div className="bg-primary p-2 rounded-xl">
+                    <Globe className="text-secondary" size={24} />
+                 </div>
+                 <span className="text-2xl font-black text-primary tracking-tight">
+                    {config?.logo_url || "Saudiavisa"}
+                 </span>
+              </div>
+            )}
           </Link>
 
           {/* Desktop Nav */}
@@ -224,8 +237,8 @@ const MainLayout: React.FC = () => {
       </footer>
 
       {/* Floating Buttons */}
-      <WhatsAppButton phone={whatsappNumber} />
-      <ScrollToTop />
+      <WhatsAppButton phone={whatsappNumber} isRtl={i18n.language === 'ar'} />
+      <ScrollToTop isRtl={i18n.language === 'ar'} />
     </div>
   );
 };

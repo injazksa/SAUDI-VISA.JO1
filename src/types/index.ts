@@ -60,6 +60,7 @@ export type ContactSubmission = {
 export type SiteConfig = {
   id: string;
   logo_url: string;
+  logo_image?: string;
   site_title_ar: string;
   site_title_en: string;
   hero_ar: { title: string; subtitle: string; cta_text: string };
@@ -99,6 +100,9 @@ export type Profession = {
   name_ar: string;
   name_en: string;
   code: string;
+  category_ar?: string;
+  category_en?: string;
+  documents?: string[];
   created_at: string;
 };
 

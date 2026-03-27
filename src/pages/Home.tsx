@@ -25,25 +25,40 @@ const Home: React.FC = () => {
   const [config, setConfig] = useState<SiteConfig | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  const defaultSliders = [
+    {
+      image_url: 'https://miaoda-site-img.s3cdn.medo.dev/images/KLing_cfb1f010-7122-4992-a910-4331424ea9d5.jpg',
+      title_ar: 'مكتب تأشيرات السعودية في الأردن',
+      title_en: 'Saudi Visa Office in Jordan',
+      subtitle_ar: 'المركز المعتمد للسفارة السعودية - الشركة المتخصصة للتوظيف ترخيص 22128',
+      subtitle_en: 'Certified Center for the Saudi Embassy - Specialized Recruitment Company License 22128'
+    },
+    {
+      image_url: 'https://miaoda-site-img.s3cdn.medo.dev/images/KLing_87030688-dd3c-4e24-9eb4-64bcaa1014a5.jpg',
+      title_ar: 'إصدار كافة أنواع التأشيرات',
+      title_en: 'Issuing All Types of Visas',
+      subtitle_ar: 'تأشيرات العمل، الزيارة، السياحة، والعمرة بأعلى كفاءة وسرعة ممكنة.',
+      subtitle_en: 'Work, Visit, Tourist, and Umrah visas with the highest efficiency and speed.'
+    }
+  ];
+
+  const currentSliders = config?.home_sliders && config.home_sliders.length > 0 ? config.home_sliders : defaultSliders;
+
   useEffect(() => {
-    if (config?.home_sliders && config.home_sliders.length > 0) {
+    if (currentSliders.length > 0) {
       const timer = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % (config.home_sliders?.length || 1));
+        setCurrentSlide((prev) => (prev + 1) % currentSliders.length);
       }, 6000);
       return () => clearInterval(timer);
     }
-  }, [config]);
+  }, [currentSliders]);
 
   const nextSlide = () => {
-    if (config?.home_sliders) {
-      setCurrentSlide((prev) => (prev + 1) % config.home_sliders!.length);
-    }
+    setCurrentSlide((prev) => (prev + 1) % currentSliders.length);
   };
 
   const prevSlide = () => {
-    if (config?.home_sliders) {
-      setCurrentSlide((prev) => (prev === 0 ? config.home_sliders!.length - 1 : prev - 1));
-    }
+    setCurrentSlide((prev) => (prev === 0 ? currentSliders.length - 1 : prev - 1));
   };
 
   useEffect(() => {
@@ -192,7 +207,7 @@ const Home: React.FC = () => {
             {(config?.trust_badges || [
               { icon: 'Clock', label_ar: "سرعة الإنجاز", label_en: "Fast Processing" },
               { icon: 'ShieldCheck', label_ar: "موثوقية تامة", label_en: "Full Reliability" },
-              { icon: 'Star', label_ar: "خبرة واسعة", label_en: "Great Experience" },
+              { icon: 'Star', label_ar: "مركز معتمد", label_en: "Certified Center" },
               { icon: 'Globe', label_ar: "تغطية شاملة", label_en: "Full Coverage" }
             ]).map((badge, idx) => (
               <motion.div 
@@ -211,6 +226,91 @@ const Home: React.FC = () => {
             ))}
          </div>
       </div>
+
+      {/* Tools Section */}
+      <section className="bg-muted/30 py-24 relative overflow-hidden">
+         <div className="absolute top-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl -mr-48 -mt-48"></div>
+         <div className="container mx-auto px-4 relative z-10">
+            <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+               <h2 className="text-4xl md:text-6xl font-black text-primary leading-tight">
+                  {isRtl ? "أدوات ذكية لتسهيل معاملاتك" : "Smart Tools to Simplify Your Transactions"}
+               </h2>
+               <p className="text-xl text-muted-foreground leading-relaxed">
+                  {isRtl 
+                    ? "نقدم لك مجموعة من الأدوات التفاعلية لمساعدتك في معرفة التكاليف والأوراق المطلوبة بدقة." 
+                    : "We offer interactive tools to help you know costs and required documents accurately."}
+               </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+               {/* Tool 1: Visa Calculator */}
+               <motion.div whileHover={{ y: -10 }} className="h-full">
+                  <Card className="h-full rounded-[40px] border-none shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group">
+                     <div className="p-10 bg-primary text-white space-y-6 flex-1 flex flex-col justify-between h-full">
+                        <div className="space-y-4">
+                           <div className="bg-secondary/20 w-20 h-20 rounded-3xl flex items-center justify-center text-secondary group-hover:scale-110 transition-transform duration-500">
+                              <Calculator size={40} />
+                           </div>
+                           <h3 className="text-3xl font-black">{isRtl ? "حاسبة الرسوم" : "Visa Calculator"}</h3>
+                           <p className="text-white/70 leading-relaxed font-medium">
+                              {isRtl ? "احسب التكلفة التقريبية لتأشيرتك بناءً على الجنسية ونوع التأشيرة." : "Calculate the approximate cost of your visa based on nationality and type."}
+                           </p>
+                        </div>
+                        <Link to="/tools/visa-calculator">
+                           <Button className="w-full bg-secondary text-primary font-black py-7 rounded-2xl hover:bg-white transition-colors">
+                              {isRtl ? "ابدأ الحساب الآن" : "Start Calculating"}
+                           </Button>
+                        </Link>
+                     </div>
+                  </Card>
+               </motion.div>
+
+               {/* Tool 2: Required Documents */}
+               <motion.div whileHover={{ y: -10 }} className="h-full">
+                  <Card className="h-full rounded-[40px] border-none shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group">
+                     <div className="p-10 bg-white text-primary space-y-6 flex-1 flex flex-col justify-between h-full">
+                        <div className="space-y-4">
+                           <div className="bg-primary/5 w-20 h-20 rounded-3xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-500">
+                              <FileText size={40} />
+                           </div>
+                           <h3 className="text-3xl font-black">{isRtl ? "الأوراق المطلوبة" : "Required Docs"}</h3>
+                           <p className="text-muted-foreground leading-relaxed font-medium">
+                              {isRtl ? "اعرف كافة المستندات المطلوبة حسب مهنتك واطبع القائمة مباشرة." : "Know all required documents according to your profession and print the list."}
+                           </p>
+                        </div>
+                        <Link to="/tools/required-documents">
+                           <Button className="w-full bg-primary text-white font-black py-7 rounded-2xl hover:bg-secondary hover:text-primary transition-all">
+                              {isRtl ? "عرض القائمة" : "View List"}
+                           </Button>
+                        </Link>
+                     </div>
+                  </Card>
+               </motion.div>
+
+               {/* Tool 3: Professional Auth */}
+               <motion.div whileHover={{ y: -10 }} className="h-full">
+                  <Card className="h-full rounded-[40px] border-none shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group">
+                     <div className="p-10 bg-secondary text-primary space-y-6 flex-1 flex flex-col justify-between h-full">
+                        <div className="space-y-4">
+                           <div className="bg-primary/10 w-20 h-20 rounded-3xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-500">
+                              <ShieldCheck size={40} />
+                           </div>
+                           <h3 className="text-3xl font-black">{isRtl ? "الاعتماد المهني" : "Professional Auth"}</h3>
+                           <p className="text-primary/70 leading-relaxed font-medium">
+                              {isRtl ? "دليل شامل لإجراءات الاعتماد المهني السعودي للمهندسين والأطباء." : "Comprehensive guide for Saudi professional accreditation for engineers and doctors."}
+                           </p>
+                        </div>
+                        <Link to="/tools/saudi-accreditation">
+                           <Button className="w-full bg-primary text-white font-black py-7 rounded-2xl hover:bg-white hover:text-primary transition-all">
+                              {isRtl ? "دليل الاعتماد" : "Accreditation Guide"}
+                           </Button>
+                        </Link>
+                     </div>
+                  </Card>
+               </motion.div>
+            </div>
+         </div>
+      </section>
 
       {/* About Quick Section */}
       <section className="container mx-auto px-4">

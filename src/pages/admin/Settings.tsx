@@ -92,6 +92,14 @@ const AdminSettings: React.FC = () => {
                    onChange={(e) => setConfig({ ...config!, logo_url: e.target.value })} 
                  />
               </div>
+              <div className="space-y-2">
+                 <label className="text-sm font-bold">رابط صورة الشعار (اختياري)</label>
+                 <Input 
+                   className="rounded-xl h-12"
+                   value={config?.logo_image} 
+                   onChange={(e) => setConfig({ ...config!, logo_image: e.target.value })} 
+                 />
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                    <label className="text-sm font-bold">عنوان الموقع (AR)</label>
