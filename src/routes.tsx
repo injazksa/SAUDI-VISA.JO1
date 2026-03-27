@@ -50,9 +50,9 @@ export const routes: RouteObject[] = [
       { path: 'tools/required-documents', element: <RequiredDocuments /> },
       { path: 'tools/professions', element: <ProfessionsDirectory /> },
       { path: 'legal/:slug', element: <LegalPage /> },
-      { path: 'admin/login', element: <Login /> }, // Hidden login path
     ],
   },
+  { path: '/admin/login', element: <Login /> },
   {
     path: '/admin',
     element: <AdminLayout />,
