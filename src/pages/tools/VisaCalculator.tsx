@@ -18,7 +18,7 @@ const VisaCalculator: React.FC = () => {
   const [result, setResult] = useState<{ min: number; max: number; note_ar: string; note_en: string; isApprox: boolean } | null>(null);
 
   useEffect(() => {
-    db.getNationalities().then(setNationalities);
+    db.getNationalities().then(({ data }) => setNationalities(data || []));
   }, []);
 
   const visaTypes = [
