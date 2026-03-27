@@ -15,29 +15,29 @@ export const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }
       const isPublicRoute = PUBLIC_ROUTES.some(route => 
         location.pathname === route || location.pathname.startsWith(route + '/')
       );
-      const isLoginPage = location.pathname === '/admin/login' || location.pathname.includes('/admin/login');
+      const isLoginPage = location.pathname === '/admin/login' || location.pathname.endsWith('/admin/login');
       const isAdminRoute = location.pathname.startsWith('/admin') && !isLoginPage;
 
+      // 1. If we are on the login page, NEVER redirect away from it unless the user is already logged in as admin
       if (isLoginPage) {
-        console.log('Accessing Login Page - No Redirect Allowed');
+        if (user && isAdmin) {
+          console.log('User is already Admin, redirecting to Dashboard');
+          navigate('/admin');
+        }
         return;
       }
 
-      // 1. If user is NOT logged in and tries to access a private route
+      // 2. If user is NOT logged in and tries to access a private route (not public and not login)
       if (!isPublicRoute && !user) {
+        console.log('Not logged in, redirecting to Login');
         navigate('/admin/login', { state: { from: location } });
         return;
       }
 
-      // 2. If user IS logged in and tries to access an admin route but is NOT an admin
+      // 3. If user IS logged in but is NOT an admin and tries to access an admin route
       if (isAdminRoute && user && !isAdmin) {
+        console.log('Logged in but not Admin, redirecting to Home');
         navigate('/');
-        return;
-      }
-
-      // 3. If user IS logged in and tries to access the login page
-      if (isLoginPage && user) {
-        navigate('/admin');
         return;
       }
     }
