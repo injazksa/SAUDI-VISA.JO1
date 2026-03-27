@@ -10,12 +10,18 @@ export const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }
   const location = useLocation();
 
   useEffect(() => {
+    console.log('RouteGuard Check:', { pathname: location.pathname, user: !!user, isAdmin, loading });
     if (!loading) {
       const isPublicRoute = PUBLIC_ROUTES.some(route => 
         location.pathname === route || location.pathname.startsWith(route + '/')
       );
-      const isLoginPage = location.pathname === '/admin/login';
+      const isLoginPage = location.pathname === '/admin/login' || location.pathname.includes('/admin/login');
       const isAdminRoute = location.pathname.startsWith('/admin') && !isLoginPage;
+
+      if (isLoginPage) {
+        console.log('Accessing Login Page - No Redirect Allowed');
+        return;
+      }
 
       // 1. If user is NOT logged in and tries to access a private route
       if (!isPublicRoute && !user) {
