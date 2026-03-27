@@ -14,7 +14,7 @@ export const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }
       const isPublicRoute = PUBLIC_ROUTES.some(route => 
         location.pathname === route || location.pathname.startsWith(route + '/')
       );
-      const isAdminRoute = location.pathname.startsWith('/admin');
+      const isAdminRoute = location.pathname.startsWith('/admin') && location.pathname !== '/admin/login';
 
       if (!isPublicRoute && !user) {
         navigate('/admin/login', { state: { from: location } });
