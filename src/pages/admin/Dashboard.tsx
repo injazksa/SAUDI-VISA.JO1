@@ -11,7 +11,8 @@ import {
   Settings,
   HelpCircle,
   UserCheck,
-  Globe
+  Globe,
+  Star
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -137,6 +138,15 @@ const AdminDashboard: React.FC = () => {
                     </span>
                  </Button>
                </Link>
+               <Link to="/admin/testimonials">
+                 <Button variant="outline" className="w-full h-16 justify-start px-6 space-x-3 rtl:space-x-reverse rounded-2xl border-2 hover:bg-primary hover:text-white group transition-all" asChild>
+                    <span>
+                      <Star size={22} className="text-secondary group-hover:text-white" />
+                      <span className="text-lg">إدارة آراء العملاء</span>
+                    </span>
+                 </Button>
+               </Link>
+
                <Link to="/admin/settings">
                  <Button variant="outline" className="w-full h-16 justify-start px-6 space-x-3 rtl:space-x-reverse rounded-2xl border-2 hover:bg-primary hover:text-white group transition-all" asChild>
                     <span>

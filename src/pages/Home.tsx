@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, ArrowLeft, ShieldCheck, Globe, Clock, Star, 
-  HelpCircle, CheckCircle2, Phone, ExternalLink, Calculator, UserCheck, FileText
+  HelpCircle, CheckCircle2, Phone, ExternalLink, Calculator, UserCheck, FileText,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,28 @@ const Home: React.FC = () => {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [config, setConfig] = useState<SiteConfig | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    if (config?.home_sliders && config.home_sliders.length > 0) {
+      const timer = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % (config.home_sliders?.length || 1));
+      }, 6000);
+      return () => clearInterval(timer);
+    }
+  }, [config]);
+
+  const nextSlide = () => {
+    if (config?.home_sliders) {
+      setCurrentSlide((prev) => (prev + 1) % config.home_sliders!.length);
+    }
+  };
+
+  const prevSlide = () => {
+    if (config?.home_sliders) {
+      setCurrentSlide((prev) => (prev === 0 ? config.home_sliders!.length - 1 : prev - 1));
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,8 +69,27 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-24 pb-20 overflow-hidden">
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center bg-primary overflow-hidden">
+      {/* Hero Section with Slider */}
+      <section className="relative h-[95vh] md:h-[90vh] flex items-center bg-primary overflow-hidden">
+        <AnimatePresence mode="wait">
+          {config?.home_sliders && config.home_sliders.length > 0 && (
+            <motion.div
+              key={currentSlide}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1 }}
+              className="absolute inset-0"
+            >
+              <div 
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[10000ms] scale-110"
+                style={{ backgroundImage: `url(${config.home_sliders[currentSlide].image_url})` }}
+              ></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/70 to-transparent rtl:bg-gradient-to-l"></div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Abstract background elements */}
         <div className="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none">
           <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-secondary rounded-full -mr-96 -mt-96 blur-3xl"></div>
@@ -57,70 +99,115 @@ const Home: React.FC = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl space-y-8">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center space-x-2 rtl:space-x-reverse bg-secondary/20 text-secondary border border-secondary/30 px-4 py-2 rounded-full text-sm font-bold"
+              key={`badge-${currentSlide}`}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="inline-flex items-center space-x-2 rtl:space-x-reverse bg-secondary/20 text-secondary border border-secondary/30 px-5 py-2.5 rounded-full text-sm font-bold backdrop-blur-md"
             >
               <ShieldCheck size={18} />
               <span>{isRtl ? "مكتب معتمد للسفارة السعودية في الأردن" : "Certified Saudi Embassy Office in Jordan"}</span>
             </motion.div>
             
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-5xl md:text-7xl font-black text-white leading-tight"
-            >
-              {hero?.title || (isRtl ? "مركز تأشيرات السعودية المعتمد" : "Approved Saudi Visa Center")}
-            </motion.h1>
-            
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-xl text-white/80 leading-relaxed font-medium"
-            >
-              {hero?.subtitle || (isRtl ? "نحن شريكك الموثوق لتسهيل كافة إجراءات التأشيرات والمصادقات الرسمية." : "Your trusted partner for facilitating all visa procedures and official authentications.")}
-            </motion.p>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`content-${currentSlide}`}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.8 }}
+                className="space-y-6"
+              >
+                <h1 className="text-5xl md:text-8xl font-black text-white leading-tight drop-shadow-2xl">
+                  {isRtl 
+                    ? (config?.home_sliders?.[currentSlide]?.title_ar || config?.hero_ar?.title)
+                    : (config?.home_sliders?.[currentSlide]?.title_en || config?.hero_en?.title)}
+                </h1>
+                
+                <p className="text-xl md:text-2xl text-white/90 leading-relaxed font-medium max-w-2xl drop-shadow-lg">
+                  {isRtl 
+                    ? (config?.home_sliders?.[currentSlide]?.subtitle_ar || config?.hero_ar?.subtitle)
+                    : (config?.home_sliders?.[currentSlide]?.subtitle_en || config?.hero_en?.subtitle)}
+                </p>
+              </motion.div>
+            </AnimatePresence>
             
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 rtl:sm:space-x-reverse pt-4"
+              className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 rtl:sm:space-x-reverse pt-4"
             >
               <Link to="/services">
-                <Button size="lg" className="w-full sm:w-auto text-lg px-8 bg-secondary hover:bg-secondary/90 text-white border-none py-7 rounded-2xl shadow-xl shadow-secondary/20" asChild>
+                <Button size="lg" className="w-full sm:w-auto text-xl px-10 bg-secondary hover:bg-white text-primary font-black border-none py-8 rounded-2xl shadow-2xl shadow-secondary/20 transition-all hover:scale-105" asChild>
                   <span>{isRtl ? "استكشف خدماتنا" : "Explore Services"}</span>
                 </Button>
               </Link>
               <Link to="/tools/visa-calculator">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 border-white/30 text-white hover:bg-white hover:text-primary py-7 rounded-2xl backdrop-blur-sm" asChild>
-                   <span>
-                      <Calculator className="mr-2 rtl:ml-2" size={20} />
-                      {isRtl ? "حاسبة الرسوم" : "Fee Calculator"}
-                   </span>
+                <Button size="lg" variant="outline" className="w-full sm:w-auto text-xl px-10 border-secondary/50 text-secondary hover:bg-secondary hover:text-primary py-8 rounded-2xl backdrop-blur-md font-black shadow-2xl transition-all hover:scale-105" asChild>
+                    <span>
+                       <Calculator className="mr-3 rtl:ml-3" size={24} />
+                       {isRtl ? "حاسبة الرسوم الذكية" : "Smart Fee Calculator"}
+                    </span>
                 </Button>
               </Link>
             </motion.div>
           </div>
         </div>
+
+        {/* Slider Controls */}
+        <div className="absolute bottom-10 right-4 lg:right-10 flex items-center space-x-4 rtl:space-x-reverse z-30">
+           <Button 
+            onClick={prevSlide}
+            variant="ghost" 
+            size="icon" 
+            className="w-14 h-14 rounded-full bg-white/10 hover:bg-secondary text-white hover:text-primary backdrop-blur-md border border-white/20 transition-all"
+           >
+              {isRtl ? <ChevronRight size={32} /> : <ChevronLeft size={32} />}
+           </Button>
+           <Button 
+            onClick={nextSlide}
+            variant="ghost" 
+            size="icon" 
+            className="w-14 h-14 rounded-full bg-white/10 hover:bg-secondary text-white hover:text-primary backdrop-blur-md border border-white/20 transition-all"
+           >
+              {isRtl ? <ChevronLeft size={32} /> : <ChevronRight size={32} />}
+           </Button>
+        </div>
+
+        {/* Slide Indicators */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center space-x-3 rtl:space-x-reverse z-30">
+           {config?.home_sliders?.map((_, idx) => (
+             <button
+               key={idx}
+               onClick={() => setCurrentSlide(idx)}
+               className={`h-2 rounded-full transition-all duration-500 ${currentSlide === idx ? 'w-12 bg-secondary' : 'w-2 bg-white/30'}`}
+             ></button>
+           ))}
+        </div>
       </section>
 
       {/* Trust Badges */}
-      <div className="container mx-auto px-4 -mt-12 relative z-20">
-         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { icon: <Clock />, label_ar: "سرعة الإنجاز", label_en: "Fast Processing" },
-              { icon: <ShieldCheck />, label_ar: "موثوقية تامة", label_en: "Full Reliability" },
-              { icon: <Star />, label_ar: "خبرة واسعة", label_en: "Great Experience" },
-              { icon: <Globe />, label_ar: "تغطية شاملة", label_en: "Full Coverage" }
-            ].map((badge, idx) => (
-              <div key={idx} className="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center text-center space-y-3 border-b-4 border-secondary">
-                 <div className="text-secondary">{badge.icon}</div>
-                 <span className="font-bold text-primary text-sm md:text-base">{isRtl ? badge.label_ar : badge.label_en}</span>
-              </div>
+      <div className="container mx-auto px-4 -mt-16 md:-mt-12 relative z-20">
+         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+            {(config?.trust_badges || [
+              { icon: 'Clock', label_ar: "سرعة الإنجاز", label_en: "Fast Processing" },
+              { icon: 'ShieldCheck', label_ar: "موثوقية تامة", label_en: "Full Reliability" },
+              { icon: 'Star', label_ar: "خبرة واسعة", label_en: "Great Experience" },
+              { icon: 'Globe', label_ar: "تغطية شاملة", label_en: "Full Coverage" }
+            ]).map((badge, idx) => (
+              <motion.div 
+                key={idx} 
+                whileHover={{ y: -5 }}
+                className="bg-white p-8 rounded-[32px] shadow-2xl flex flex-col items-center text-center space-y-4 border-b-8 border-secondary group hover:bg-primary transition-all duration-500"
+              >
+                 <div className="text-secondary group-hover:text-white transition-colors">
+                    {badge.icon === 'Clock' && <Clock size={40} />}
+                    {badge.icon === 'ShieldCheck' && <ShieldCheck size={40} />}
+                    {badge.icon === 'Star' && <Star size={40} />}
+                    {badge.icon === 'Globe' && <Globe size={40} />}
+                 </div>
+                 <span className="font-black text-primary group-hover:text-white text-lg transition-colors">{isRtl ? badge.label_ar : badge.label_en}</span>
+              </motion.div>
             ))}
          </div>
       </div>

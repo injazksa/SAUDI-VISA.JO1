@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { Settings, Save, Globe, Phone, Mail, MapPin, Hash } from 'lucide-react';
+import { Settings, Save, Globe, Phone, Mail, MapPin, Hash, Image as ImageIcon, Plus, Trash2 } from 'lucide-react';
 
 const AdminSettings: React.FC = () => {
   const [config, setConfig] = useState<SiteConfig | null>(null);
@@ -28,6 +28,38 @@ const AdminSettings: React.FC = () => {
     else toast.success('تم حفظ الإعدادات بنجاح');
     setSaving(false);
   };
+  const addSlider = () => {
+    const newSliders = [...(config?.home_sliders || []), { image_url: '', title_ar: '', title_en: '', subtitle_ar: '', subtitle_en: '' }];
+    setConfig({ ...config!, home_sliders: newSliders });
+  };
+
+  const removeSlider = (index: number) => {
+    const newSliders = config?.home_sliders?.filter((_, i) => i !== index);
+    setConfig({ ...config!, home_sliders: newSliders });
+  };
+
+  const updateSlider = (index: number, field: string, value: any) => {
+    const newSliders = [...(config?.home_sliders || [])];
+    newSliders[index] = { ...newSliders[index], [field]: value };
+    setConfig({ ...config!, home_sliders: newSliders });
+  };
+
+  const addBadge = () => {
+    const newBadges = [...(config?.trust_badges || []), { icon: 'Star', label_ar: '', label_en: '' }];
+    setConfig({ ...config!, trust_badges: newBadges });
+  };
+
+  const removeBadge = (index: number) => {
+    const newBadges = config?.trust_badges?.filter((_, i) => i !== index);
+    setConfig({ ...config!, trust_badges: newBadges });
+  };
+
+  const updateBadge = (index: number, field: string, value: string) => {
+    const newBadges = [...(config?.trust_badges || [])];
+    newBadges[index] = { ...newBadges[index], [field]: value };
+    setConfig({ ...config!, trust_badges: newBadges });
+  };
+
 
   if (loading) return <div className="p-10 text-center font-bold">جاري تحميل الإعدادات...</div>;
 
@@ -157,6 +189,110 @@ const AdminSettings: React.FC = () => {
               </div>
            </CardContent>
         </Card>
+
+         {/* Trust Badges Management */}
+         <Card className="border-none shadow-xl rounded-3xl overflow-hidden lg:col-span-2">
+            <CardHeader className="bg-muted/50 border-b flex flex-row items-center justify-between">
+               <CardTitle className="flex items-center gap-3 text-primary">
+                  <Star size={20} className="text-secondary" />
+                  <span>مميزاتنا (لماذا تختارنا)</span>
+               </CardTitle>
+               <Button onClick={addBadge} size="sm" className="bg-secondary text-primary font-bold">
+                  <Plus size={18} className="ml-1" />
+                  إضافة ميزة
+               </Button>
+            </CardHeader>
+            <CardContent className="p-8 space-y-4">
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                 {config?.trust_badges?.map((badge, idx) => (
+                    <div key={idx} className="p-6 border rounded-2xl relative group bg-muted/10">
+                       <Button 
+                          variant="destructive" 
+                          size="icon" 
+                          onClick={() => removeBadge(idx)}
+                          className="absolute -top-3 -left-3 h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                       >
+                          <Trash2 size={14} />
+                       </Button>
+                       <div className="space-y-3">
+                          <Select value={badge.icon} onValueChange={(val) => updateBadge(idx, 'icon', val)}>
+                             <SelectTrigger className="h-10 rounded-xl"><SelectValue /></SelectTrigger>
+                             <SelectContent>
+                                <SelectItem value="Clock">ساعة (سرعة)</SelectItem>
+                                <SelectItem value="ShieldCheck">درع (أمان)</SelectItem>
+                                <SelectItem value="Star">نجمة (تميز)</SelectItem>
+                                <SelectItem value="Globe">كرة أرضية (عالمي)</SelectItem>
+                             </SelectContent>
+                          </Select>
+                          <Input placeholder="العنوان (AR)" className="rounded-xl h-10" value={badge.label_ar} onChange={(e) => updateBadge(idx, 'label_ar', e.target.value)} />
+                          <Input placeholder="Label (EN)" className="rounded-xl h-10" value={badge.label_en} onChange={(e) => updateBadge(idx, 'label_en', e.target.value)} />
+                       </div>
+                    </div>
+                 ))}
+               </div>
+            </CardContent>
+         </Card>
+
+         {/* Home Sliders */}
+         <Card className="border-none shadow-xl rounded-3xl overflow-hidden lg:col-span-2">
+            <CardHeader className="bg-muted/50 border-b flex flex-row items-center justify-between">
+               <CardTitle className="flex items-center gap-3 text-primary">
+                  <ImageIcon size={20} className="text-secondary" />
+                  <span>سلايدر الصور في الصفحة الرئيسية</span>
+               </CardTitle>
+               <Button onClick={addSlider} size="sm" className="bg-secondary text-primary font-bold">
+                  <Plus size={18} className="ml-1" />
+                  إضافة شريحة جديدة
+               </Button>
+            </CardHeader>
+            <CardContent className="p-8 space-y-8">
+               {config?.home_sliders?.map((slider, idx) => (
+                  <div key={idx} className="p-6 border-2 border-dashed rounded-[32px] space-y-6 relative group">
+                     <Button 
+                        variant="destructive" 
+                        size="icon" 
+                        onClick={() => removeSlider(idx)}
+                        className="absolute -top-4 -left-4 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                     >
+                        <Trash2 size={18} />
+                     </Button>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                           <label className="text-sm font-bold">رابط الصورة</label>
+                           <Input className="rounded-xl h-12" value={slider.image_url} onChange={(e) => updateSlider(idx, 'image_url', e.target.value)} />
+                        </div>
+                        <div className="space-y-2 md:col-span-1">
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                 <label className="text-sm font-bold">العنوان (AR)</label>
+                                 <Input className="rounded-xl h-12" value={slider.title_ar} onChange={(e) => updateSlider(idx, 'title_ar', e.target.value)} />
+                              </div>
+                              <div className="space-y-2">
+                                 <label className="text-sm font-bold">العنوان (EN)</label>
+                                 <Input className="rounded-xl h-12" value={slider.title_en} onChange={(e) => updateSlider(idx, 'title_en', e.target.value)} />
+                              </div>
+                           </div>
+                        </div>
+                        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                           <div className="space-y-2">
+                              <label className="text-sm font-bold">النص الفرعي (AR)</label>
+                              <Textarea className="rounded-xl" rows={2} value={slider.subtitle_ar} onChange={(e) => updateSlider(idx, 'subtitle_ar', e.target.value)} />
+                           </div>
+                           <div className="space-y-2">
+                              <label className="text-sm font-bold">النص الفرعي (EN)</label>
+                              <Textarea className="rounded-xl" rows={2} value={slider.subtitle_en} onChange={(e) => updateSlider(idx, 'subtitle_en', e.target.value)} />
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               ))}
+               {(!config?.home_sliders || config.home_sliders.length === 0) && (
+                 <div className="text-center py-12 text-muted-foreground bg-muted/20 rounded-3xl border-2 border-dashed">
+                    لا يوجد صور في السلايدر حالياً، اضغط على "إضافة شريحة جديدة" للبدء.
+                 </div>
+               )}
+            </CardContent>
+         </Card>
 
         {/* News Ticker */}
         <Card className="border-none shadow-xl rounded-3xl overflow-hidden lg:col-span-2">

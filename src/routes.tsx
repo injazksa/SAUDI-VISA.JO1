@@ -27,6 +27,7 @@ import AdminFaqs from '@/pages/admin/Faqs';
 import AdminProfessions from '@/pages/admin/Professions';
 import AdminUsers from '@/pages/admin/Users';
 import AdminNationalities from '@/pages/admin/Nationalities';
+import AdminTestimonials from '@/pages/admin/Testimonials';
 import NotFound from '@/pages/NotFound';
 
 export const routes: RouteObject[] = [
@@ -66,6 +67,7 @@ export const routes: RouteObject[] = [
       { path: 'professions', element: <AdminProfessions /> },
       { path: 'users', element: <AdminUsers /> },
       { path: 'nationalities', element: <AdminNationalities /> },
+      { path: 'testimonials', element: <AdminTestimonials /> },
     ],
   },
   { path: '/404', element: <NotFound /> },

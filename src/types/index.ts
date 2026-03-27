@@ -76,6 +76,14 @@ export type SiteConfig = {
   };
   news_ticker_ar: string[];
   news_ticker_en: string[];
+  home_sliders?: { 
+    image_url: string; 
+    title_ar: string; 
+    title_en: string; 
+    subtitle_ar: string; 
+    subtitle_en: string;
+  }[];
+  trust_badges?: { icon: string; label_ar: string; label_en: string }[];
   updated_at: string;
 };
 

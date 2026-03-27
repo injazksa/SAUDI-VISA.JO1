@@ -13,7 +13,8 @@ import {
   HelpCircle,
   UserCheck,
   Globe,
-  Users
+  Users,
+  Star
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -31,6 +32,7 @@ const AdminLayout: React.FC = () => {
     { name: 'الأسئلة الشائعة', path: '/admin/faqs', icon: HelpCircle },
     { name: 'المهن والرموز', path: '/admin/professions', icon: UserCheck },
     { name: 'الجنسيات', path: '/admin/nationalities', icon: Globe },
+    { name: 'آراء العملاء', path: '/admin/testimonials', icon: Star },
     { name: 'المستخدمين', path: '/admin/users', icon: Users },
     { name: 'الرسائل', path: '/admin/contact', icon: Mail },
     { name: 'الإعدادات', path: '/admin/settings', icon: Settings },
