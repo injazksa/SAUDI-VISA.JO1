@@ -44,8 +44,10 @@ const Login: React.FC = () => {
 
     if (error) {
       toast.error(error.message);
+      alert('خطأ في تسجيل الدخول: ' + error.message);
     } else {
       toast.success(isLogin ? "Welcome back!" : "Account created!");
+      alert('تم تسجيل الدخول بنجاح! جاري التحقق من صلاحياتك...');
       navigate(from, { replace: true });
     }
     setLoading(false);

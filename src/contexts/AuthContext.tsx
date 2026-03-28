@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const isAdmin = profile?.role === 'admin';
+  const isAdmin = profile?.role === 'admin' || profile?.role === 'مسؤول';
 
   const refreshProfile = async () => {
     if (!user) {
