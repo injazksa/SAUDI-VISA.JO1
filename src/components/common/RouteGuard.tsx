@@ -10,9 +10,16 @@ export const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }
   const location = useLocation();
 
   useEffect(() => {
-    // Diagnostic Alert to confirm the new version is live
+    // Diagnostic Alert for Mobile Users
     if (location.pathname.includes('/admin/login')) {
-      console.log('DEBUG: Admin Login Access Attempted', { user: !!user, isAdmin, loading });
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseKey) {
+        alert('خطأ: إعدادات Supabase غير واصلة من Netlify! يرجى التأكد من حفظ المتغيرات في Netlify وإعادة النشر.');
+      } else {
+        console.log('DEBUG: Admin Login Access Attempted', { user: !!user, isAdmin, loading });
+      }
     }
     
     if (!loading) {
