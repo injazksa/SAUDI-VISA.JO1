@@ -10,7 +10,11 @@ export const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }
   const location = useLocation();
 
   useEffect(() => {
-    console.log('RouteGuard Check:', { pathname: location.pathname, user: !!user, isAdmin, loading });
+    // Diagnostic Alert to confirm the new version is live
+    if (location.pathname.includes('/admin/login')) {
+      console.log('DEBUG: Admin Login Access Attempted', { user: !!user, isAdmin, loading });
+    }
+    
     if (!loading) {
       const isPublicRoute = PUBLIC_ROUTES.some(route => 
         location.pathname === route || location.pathname.startsWith(route + '/')
