@@ -36,8 +36,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Temporary fix to allow access while debugging role issues
-  const isAdmin = !!user && (profile?.role === 'admin' || profile?.role === 'مسؤول' || true);
+  // Secure Admin Check: Only allow specific user ID and Email
+  const isAdmin = !!user && (
+    user.id === '39b7aa34-5f3e-4d3b-9afa-49f5511509fc' || 
+    user.email === 'Abdallhsmj@gmail.com' ||
+    profile?.role === 'admin' || 
+    profile?.role === 'مسؤول'
+  );
 
   const refreshProfile = async () => {
     if (!user) {
