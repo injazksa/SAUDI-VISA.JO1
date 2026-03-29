@@ -1,12 +1,11 @@
+import { createClient } from "@supabase/supabase-js";
 
-            import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// تم تحديث المفاتيح يدوياً لضمان عمل الموقع فوراً بعد نقل الاستضافة
+const supabaseUrl = "https://afnbvdbgartnjewhycgl.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmbmJ2ZGJnYXJ0bmpld2h5Y2dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MTg3MDksImV4cCI6MjA5MDE5NDcwOX0._ZgiIonejFQiVnit98CsHWnQJD7oAFOWnPLEUCmpvtY";
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Supabase configuration is missing! Check Netlify Environment Variables.');
 }
 
-export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
-            
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

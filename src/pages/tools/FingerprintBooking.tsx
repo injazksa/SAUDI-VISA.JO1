@@ -32,6 +32,45 @@ const FingerprintBooking: React.FC = () => {
   const isRtl = i18n.language === 'ar';
   
   const [loading, setLoading] = useState(false);
+
+  // --- دالة إرسال الإيميل الاحترافية عبر Resend ---
+  const sendResendEmail = async (data: any, file: File | null) => {
+    const toBase64 = (f: File): Promise<string> => new Promise((res, rej) => {
+      const r = new FileReader(); r.readAsDataURL(f);
+      r.onload = () => res((r.result as string).split(',')[1]); r.onerror = e => rej(e);
+    });
+
+    const fileContent = file ? await toBase64(file) : null;
+
+    try {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer re_aWPL5vd6_AUmWRP53LX9UPwrNYzy91Q3m',
+        },
+        body: JSON.stringify({
+          from: 'onboarding@resend.dev',
+          to: 'Visa@saudia-visa.com',
+          subject: `🚨 طلب بصمة جديد من رقم: ${data.phone}`,
+          html: `
+            <div dir="rtl" style="font-family: Arial; border: 2px solid #059669; padding: 20px; border-radius: 15px;">
+              <h2 style="color: #059669; text-align: center;">طلب حجز موعد بصمة جديد</h2>
+              <hr/>
+              <p><b>نوع التأشيرة:</b> ${data.visaType}</p>
+              <p><b>الجنسية:</b> ${data.nationality}</p>
+              <p><b>عدد الأشخاص:</b> ${data.peopleCount}</p>
+              <p style="font-size: 18px; color: #059669;"><b>التكلفة الإجمالية: ${data.peopleCount * 15} دينار</b></p>
+              <hr/>
+              <p><b>رقم الهاتف:</b> ${data.phone}</p>
+              <p><b>البريد الإلكتروني:</b> ${data.email || 'غير متوفر'}</p>
+            </div>
+          `,
+          attachments: fileContent ? [{ filename: file!.name, content: fileContent }] : []
+        }),
+      });
+    } catch (err) { console.error("Email error:", err); }
+  };
   const [submitted, setSubmitted] = useState(false);
   const [orderData, setOrderData] = useState<any>(null);
   const [nationalities, setNationalities] = useState<Nationality[]>([]);
@@ -95,9 +134,15 @@ const FingerprintBooking: React.FC = () => {
         created_at: new Date().toISOString()
       };
 
-      // In a real app, we would save this to a new table 'fingerprint_appointments'
-      // For now, we'll simulate success and show the receipt
-      // await db.insertFingerprintAppointment(submissionData); 
+      // حفظ البيانات في جدول fingerprint_appointments لأرشفة المعاملة
+      const { error: insErr } = await db.supabase
+        .from('fingerprint_appointments')
+        .insert([submissionData]);
+
+      if (insErr) throw insErr;
+
+      // إرسال الإيميل عبر Resend
+      await sendResendEmail(formData, file);
 
       setOrderData(submissionData);
       setSubmitted(true);
