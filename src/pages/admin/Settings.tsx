@@ -18,9 +18,15 @@ const AdminSettings: React.FC = () => {
   const sliderFileInputRef = useRef<{ [key: number]: HTMLInputElement | null }>({});
 
   useEffect(() => {
-    db.getSettings('site_config').then(({ data }) => {
+    db.getSettings('site_config').then(({ data, error }) => {
+      if (error) {
+        console.error('Settings Fetch Error:', error);
+        alert('خطأ في جلب الإعدادات: ' + error.message + '\nتأكد من وجود جدول باسم settings في Supabase.');
+      }
       setConfig(data);
       setLoading(false);
+    }).catch(err => {
+      alert('خطأ غير متوقع: ' + err.message);
     });
   }, []);
 
