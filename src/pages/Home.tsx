@@ -132,13 +132,13 @@ const Home: React.FC = () => {
                 transition={{ duration: 0.8 }}
                 className="space-y-6"
               >
-                <h1 className="text-5xl md:text-8xl font-black text-white leading-tight drop-shadow-2xl">
+                <h1 className="text-4xl md:text-6xl font-black text-white leading-tight drop-shadow-2xl">
                   {isRtl 
                     ? (config?.home_sliders?.[currentSlide]?.title_ar || config?.hero_ar?.title)
                     : (config?.home_sliders?.[currentSlide]?.title_en || config?.hero_en?.title)}
                 </h1>
                 
-                <p className="text-xl md:text-2xl text-white/90 leading-relaxed font-medium max-w-2xl drop-shadow-lg">
+                <p className="text-lg md:text-xl text-white/90 leading-relaxed font-medium max-w-2xl drop-shadow-lg">
                   {isRtl 
                     ? (config?.home_sliders?.[currentSlide]?.subtitle_ar || config?.hero_ar?.subtitle)
                     : (config?.home_sliders?.[currentSlide]?.subtitle_en || config?.hero_en?.subtitle)}
@@ -153,12 +153,12 @@ const Home: React.FC = () => {
               className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 rtl:sm:space-x-reverse pt-4"
             >
               <Link to="/services">
-                <Button size="lg" className="w-full sm:w-auto text-xl px-10 bg-secondary hover:bg-white text-primary font-black border-none py-8 rounded-2xl shadow-2xl shadow-secondary/20 transition-all hover:scale-105" asChild>
+                <Button size="lg" className="w-full sm:w-auto text-lg px-8 bg-secondary hover:bg-white text-primary font-black border-none py-6 rounded-xl shadow-2xl shadow-secondary/20 transition-all hover:scale-105" asChild>
                   <span>{isRtl ? "استكشف خدماتنا" : "Explore Services"}</span>
                 </Button>
               </Link>
               <Link to="/tools/visa-calculator">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto text-xl px-10 border-secondary/50 text-secondary hover:bg-secondary hover:text-primary py-8 rounded-2xl backdrop-blur-md font-black shadow-2xl transition-all hover:scale-105" asChild>
+                <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 border-secondary/50 text-secondary hover:bg-secondary hover:text-primary py-6 rounded-xl backdrop-blur-md font-black shadow-2xl transition-all hover:scale-105" asChild>
                     <span>
                        <Calculator className="mr-3 rtl:ml-3" size={24} />
                        {isRtl ? "حاسبة الرسوم الذكية" : "Smart Fee Calculator"}
@@ -203,7 +203,7 @@ const Home: React.FC = () => {
 
       {/* Trust Badges */}
       <div className="container mx-auto px-4 -mt-16 md:-mt-12 relative z-20">
-         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {(config?.trust_badges || [
               { icon: 'Clock', label_ar: "سرعة الإنجاز", label_en: "Fast Processing" },
               { icon: 'ShieldCheck', label_ar: "موثوقية تامة", label_en: "Full Reliability" },
@@ -213,7 +213,7 @@ const Home: React.FC = () => {
               <motion.div 
                 key={idx} 
                 whileHover={{ y: -5 }}
-                className="bg-white p-8 rounded-[32px] shadow-2xl flex flex-col items-center text-center space-y-4 border-b-8 border-secondary group hover:bg-primary transition-all duration-500"
+                className="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center text-center space-y-3 border-b-4 border-secondary group hover:bg-primary transition-all duration-500"
               >
                  <div className="text-secondary group-hover:text-white transition-colors">
                     {badge.icon === 'Clock' && <Clock size={40} />}

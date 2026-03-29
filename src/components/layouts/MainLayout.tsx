@@ -119,18 +119,20 @@ const MainLayout: React.FC = () => {
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            {config?.logo_image ? (
-              <img src={config.logo_image} alt="Saudiavisa Logo" className="h-10 md:h-12 w-auto" />
-            ) : (
-              <div className="flex items-center gap-2">
-                 <div className="bg-primary p-2 rounded-xl">
-                    <Globe className="text-secondary" size={24} />
-                 </div>
-                 <span className="text-2xl font-black text-primary tracking-tight">
-                    {config?.logo_url || "Saudiavisa"}
-                 </span>
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              {config?.logo_image ? (
+                <img src={config.logo_image} alt="Saudiavisa Logo" className="h-10 md:h-12 w-auto object-contain" />
+              ) : (
+                <div className="flex items-center gap-2">
+                   <div className="bg-primary p-2 rounded-xl shrink-0">
+                      <Globe className="text-secondary" size={24} />
+                   </div>
+                   <span className="text-xl md:text-2xl font-black text-primary tracking-tight truncate max-w-[150px] md:max-w-none">
+                      {config?.logo_url && !config.logo_url.startsWith('http') ? config.logo_url : "إنجاز"}
+                   </span>
+                </div>
+              )}
+            </div>
           </Link>
 
           {/* Desktop Nav */}

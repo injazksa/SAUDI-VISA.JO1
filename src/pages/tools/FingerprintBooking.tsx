@@ -412,7 +412,10 @@ const FingerprintBooking: React.FC = () => {
                       required 
                       className="h-16 rounded-2xl border-2 focus:ring-secondary text-lg"
                       value={formData.peopleCount} 
-                      onChange={(e) => setFormData({...formData, peopleCount: parseInt(e.target.value) || 1})} 
+                      onChange={(e) => {
+                        const val = e.target.value === '' ? '' : parseInt(e.target.value);
+                        setFormData({...formData, peopleCount: val as any});
+                      }} 
                     />
                   </div>
 
