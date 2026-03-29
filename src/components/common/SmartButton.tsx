@@ -1,0 +1,6 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Button, ButtonProps } from '@/components/ui/button';
+
+interface SmartButtonProps extends ButtonProps {
+  icon?: React.ReactNode;\n  iconPosition?: 'left' | 'right';\n  glowEffect?: boolean;\n  children: React.ReactNode;\n}\n\n/**\n * SmartButton Component - Premium interactive button with micro-interactions\n * Uses GPU-accelerated transforms for smooth 60fps animations\n */\nexport const SmartButton: React.FC<SmartButtonProps> = ({\n  icon,\n  iconPosition = 'right',\n  glowEffect = false,\n  children,\n  className = '',\n  ...props\n}) => {\n  return (\n    <motion.div\n      whileHover={{ scale: 1.02 }}\n      whileTap={{ scale: 0.98 }}\n      transition={{ type: 'spring', stiffness: 400, damping: 17 }}\n    >\n      <Button\n        className={`transition-smooth ${\n          glowEffect ? 'glow-secondary' : ''\n        } ${className}`}\n        {...props}\n      >\n        <div className=\"flex items-center gap-2 rtl:gap-2\">\n          {icon && iconPosition === 'left' && <span>{icon}</span>}\n          <span>{children}</span>\n          {icon && iconPosition === 'right' && <span>{icon}</span>}\n        </div>\n      </Button>\n    </motion.div>\n  );\n};\n\nexport default SmartButton;\n

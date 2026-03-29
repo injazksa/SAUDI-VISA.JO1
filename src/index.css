@@ -86,47 +86,33 @@
   }
 }
 
+/* Advanced Shadow & Gradient Utilities */
 @layer utilities {
-  .news-ticker {
-    display: inline-block;
-    padding-left: 100%;
-    animation: ticker 40s linear infinite;
+  /* Premium Shadows */
+  .shadow-premium {
+    box-shadow: 0 20px 25px -5px rgba(26, 43, 60, 0.1), 0 10px 10px -5px rgba(26, 43, 60, 0.04);
   }
-  @keyframes ticker {
-    0% { transform: translate3d(0, 0, 0); }
-    100% { transform: translate3d(-100%, 0, 0); }
+  .shadow-premium-lg {
+    box-shadow: 0 25px 50px -12px rgba(26, 43, 60, 0.15);
   }
-  [dir="rtl"] .news-ticker {
-    padding-left: 0;
-    padding-right: 100%;
-    animation: ticker-rtl 40s linear infinite;
+  .shadow-premium-hover {
+    box-shadow: 0 25px 50px -12px rgba(212, 175, 55, 0.2);
   }
-  @keyframes ticker-rtl {
-    0% { transform: translate3d(0, 0, 0); }
-    100% { transform: translate3d(100%, 0, 0); }
+  
+  /* Smooth Transitions */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-}
-
-@layer base {
-  * {
-    @apply border-border;
+  .transition-fast {
+    transition: all 0.15s ease-out;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html[dir="rtl"] {
-    font-family: 'Almarai', 'Tajawal', sans-serif;
-  }
-  html[dir="ltr"] {
-    font-family: 'Inter', sans-serif;
-  }
-}
-
-@layer utilities {
+  
+  /* News Ticker - Optimized */
   .news-ticker {
     display: inline-block;
     padding-left: 100%;
     animation: ticker 30s linear infinite;
+    will-change: transform;
   }
   @keyframes ticker {
     0% { transform: translate3d(0, 0, 0); }
@@ -140,6 +126,27 @@
   @keyframes ticker-rtl {
     0% { transform: translate3d(0, 0, 0); }
     100% { transform: translate3d(100%, 0, 0); }
+  }
+  
+  /* Gradient Overlays */
+  .gradient-overlay-primary {
+    background: linear-gradient(135deg, rgba(26, 43, 60, 0.95), rgba(26, 43, 60, 0.7));
+  }
+  .gradient-overlay-gold {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
+  }
+  
+  /* Smooth Scale Animation */
+  .scale-on-hover {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .scale-on-hover:hover {
+    transform: scale(1.02);
+  }
+  
+  /* Glow Effects */
+  .glow-secondary {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
   }
 }
 
