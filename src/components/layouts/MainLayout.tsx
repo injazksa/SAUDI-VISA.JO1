@@ -102,6 +102,7 @@ const MainLayout: React.FC = () => {
     { name: t('nav.blog'), path: '/blog' },
     { name: t('nav.news'), path: '/news' },
     { name: t('nav.contact'), path: '/contact' },
+    { name: t('nav.fingerprint'), path: '/tools/fingerprint-booking' },
   ];
 
   const contactInfo = config?.contact_info;

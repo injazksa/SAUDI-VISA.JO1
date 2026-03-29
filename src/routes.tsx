@@ -15,6 +15,7 @@ import VisaCalculator from '@/pages/tools/VisaCalculator';
 import SaudiAccreditation from '@/pages/tools/SaudiAccreditation';
 import SaudiAuth from '@/pages/tools/SaudiAuth';
 import RequiredDocuments from '@/pages/tools/RequiredDocuments';
+import FingerprintBooking from '@/pages/tools/FingerprintBooking';
 import ProfessionsDirectory from '@/pages/tools/ProfessionsDirectory';
 import LegalPage from '@/pages/LegalPage';
 import AdminDashboard from '@/pages/admin/Dashboard';
@@ -49,6 +50,7 @@ export const routes: RouteObject[] = [
       { path: 'tools/saudi-auth', element: <SaudiAuth /> },
       { path: 'tools/required-documents', element: <RequiredDocuments /> },
       { path: 'tools/professions', element: <ProfessionsDirectory /> },
+      { path: 'tools/fingerprint-booking', element: <FingerprintBooking /> },
       { path: 'legal/:slug', element: <LegalPage /> },
     ],
   },

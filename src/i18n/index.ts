@@ -12,6 +12,7 @@ const resources = {
         "blog": "المدونة",
         "news": "الأخبار",
         "contact": "تواصل معنا",
+        "fingerprint": "حجز بصمة",
         "admin": "لوحة التحكم"
       },
       "common": {
@@ -63,6 +64,7 @@ const resources = {
         "blog": "Blog",
         "news": "News",
         "contact": "Contact Us",
+        "fingerprint": "Fingerprint Booking",
         "admin": "Admin"
       },
       "common": {
