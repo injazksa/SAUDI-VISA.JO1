@@ -46,7 +46,7 @@ const FingerprintBooking: React.FC = () => {
     const fileContent = file ? await toBase64(file) : null;
 
     try {
-      await fetch('https://api.resend.com/emails', {
+      const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,24 +55,31 @@ const FingerprintBooking: React.FC = () => {
         body: JSON.stringify({
           from: 'onboarding@resend.dev',
           to: 'Visa@saudia-visa.com',
-          subject: `🚨 طلب موعد جديد من رقم: ${data.phone}`,
+          subject: `🚨 طلب موعد جديد من رقم: ${data.phone || 'غير متوفر'}`,
           html: `
             <div dir="rtl" style="font-family: Arial; border: 2px solid #059669; padding: 20px; border-radius: 15px;">
               <h2 style="color: #059669; text-align: center;">طلب حجز موعد جديد</h2>
               <hr/>
-              <p><b>نوع التأشيرة:</b> ${data.visaType}</p>
-              <p><b>الجنسية:</b> ${data.nationality}</p>
-              <p><b>عدد الأشخاص:</b> ${data.peopleCount}</p>
-              <p style="font-size: 18px; color: #059669;"><b>التكلفة الإجمالية: ${data.peopleCount * 15} دينار</b></p>
+              <p><b>نوع التأشيرة:</b> ${data.visaType || 'غير محدد'}</p>
+              <p><b>الجنسية:</b> ${data.nationality || 'غير محدد'}</p>
+              <p><b>عدد الأشخاص:</b> ${data.peopleCount || 1}</p>
+              <p style="font-size: 18px; color: #059669;"><b>التكلفة الإجمالية: ${(data.peopleCount || 1) * 15} دينار</b></p>
               <hr/>
-              <p><b>رقم الهاتف:</b> ${data.phone}</p>
+              <p><b>رقم الهاتف:</b> ${data.phone || 'غير متوفر'}</p>
               <p><b>البريد الإلكتروني:</b> ${data.email || 'غير متوفر'}</p>
             </div>
           `,
-          attachments: fileContent ? [{ filename: file!.name, content: fileContent }] : []
+          attachments: (fileContent && file) ? [{ filename: file.name, content: fileContent }] : []
         }),
       });
-    } catch (err) { console.error("Email error:", err); }
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Resend API Error:", errorData);
+      }
+    } catch (err) { 
+      console.error("Email network error:", err); 
+    }
   };
   const [submitted, setSubmitted] = useState(false);
   const [orderData, setOrderData] = useState<any>(null);
