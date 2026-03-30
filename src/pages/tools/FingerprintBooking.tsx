@@ -35,64 +35,6 @@ const FingerprintBooking: React.FC = () => {
   const isRtl = i18n.language === 'ar';
   
   const [loading, setLoading] = useState(false);
-  
-  // --- دالة إرسال الإيميل الاحترافية عبر Resend ---
-  const sendResendEmail = async (data: any, file: File | null) => {
-    try {
-      // التحقق من وجود البيانات الأساسية
-      if (!data) return;
-
-      const toBase64 = (f: File): Promise<string> => new Promise((res, rej) => {
-        const r = new FileReader(); r.readAsDataURL(f);
-        r.onload = () => res((r.result as string).split(',')[1]); r.onerror = e => rej(e);
-      });
-
-      let fileContent = null;
-      if (file) {
-        try {
-          fileContent = await toBase64(file);
-        } catch (e) {
-          console.error("File conversion error:", e);
-        }
-      }
-
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer re_aWPL5vd6_AUmWRP53LX9UPwrNYzy91Q3m',
-        },
-        body: JSON.stringify({
-          from: 'onboarding@resend.dev',
-          to: 'Visa@saudia-visa.com',
-          subject: `🚨 طلب موعد جديد من رقم: ${data.phone || data.phone_number || 'غير متوفر'}`,
-          html: `
-            <div dir="rtl" style="font-family: Arial; border: 2px solid #059669; padding: 20px; border-radius: 15px;">
-              <h2 style="color: #059669; text-align: center;">طلب حجز موعد جديد</h2>
-              <hr/>
-              <p><b>نوع التأشيرة:</b> ${data.visaType || data.visa_type || 'غير محدد'}</p>
-              <p><b>الجنسية:</b> ${data.nationality || 'غير محدد'}</p>
-              <p><b>عدد الأشخاص:</b> ${data.peopleCount || data.people_count || 1}</p>
-              <p style="font-size: 18px; color: #059669;"><b>التكلفة الإجمالية: ${(data.peopleCount || data.people_count || 1) * 15} دينار</b></p>
-              <hr/>
-              <p><b>رقم الهاتف:</b> ${data.phone || data.phone_number || 'غير متوفر'}</p>
-              <p><b>البريد الإلكتروني:</b> ${data.email || 'غير متوفر'}</p>
-            </div>
-          `,
-          attachments: (fileContent && file) ? [{ filename: file.name, content: fileContent }] : []
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Resend API Error:", errorData);
-      }
-    } catch (err) { 
-      // نكتفي بتسجيل الخطأ في الكونسول لكي لا يتعطل المستخدم
-      console.error("Email processing error:", err); 
-    }
-  };
-
   const [submitted, setSubmitted] = useState(false);
   const [orderData, setOrderData] = useState<any>(null);
   const [nationalities, setNationalities] = useState<Nationality[]>([]);
@@ -132,6 +74,8 @@ const FingerprintBooking: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // التحقق من الحقول المطلوبة
     if (!formData.visaType || !formData.nationality || !formData.phone) {
       toast.error(isRtl ? "يرجى تعبئة جميع الحقول المطلوبة" : "Please fill all required fields");
       return;
@@ -140,50 +84,54 @@ const FingerprintBooking: React.FC = () => {
     setLoading(true);
     try {
       let fileUrl = '';
+      
+      // 1. محاولة رفع الصورة إذا وجدت
       if (file) {
         try {
           const { data: upData, error: upErr } = await db.uploadImage(file, 'saudiavisa_images');
-          if (upErr) {
-            console.error("Upload error but continuing:", upErr);
+          if (!upErr && upData) {
+            fileUrl = upData.publicUrl || '';
           }
-          fileUrl = upData?.publicUrl || '';
         } catch (uploadError) {
-          console.error("Upload process error:", uploadError);
+          console.error("File upload failed, but continuing with submission:", uploadError);
         }
       }
 
-      // Prepare data for submission
+      // 2. تحضير بيانات الطلب
       const submissionData = {
         visa_type: formData.visaType,
         nationality: formData.nationality,
         people_count: formData.peopleCount,
         total_cost: totalCost,
         phone_number: formData.phone,
-        email: formData.email,
+        email: formData.email || '',
         visa_document_url: fileUrl,
         status: 'new',
         ref_id: Math.floor(100000 + Math.random() * 900000).toString(),
         created_at: new Date().toISOString()
       };
 
-      // 1. حفظ البيانات في قاعدة البيانات أولاً (هذا هو الأهم)
+      // 3. الحفظ المباشر في قاعدة بيانات سوبابيس (Supabase)
       const { error: insErr } = await db.supabase
         .from('fingerprint_appointments')
         .insert([submissionData]);
 
-      if (insErr) throw insErr;
+      if (insErr) {
+        console.error("Supabase insertion error:", insErr);
+        throw new Error(insErr.message);
+      }
 
-      // 2. محاولة إرسال الإيميل في الخلفية (حتى لو فشل لن يعطل العملية)
-      sendResendEmail(submissionData, file).catch(e => console.error("Background email error:", e));
-
-      // 3. عرض صفحة النجاح للمستخدم
+      // 4. عرض صفحة النجاح للمستخدم
       setOrderData(submissionData);
       setSubmitted(true);
       toast.success(isRtl ? "تم استلام طلبك بنجاح" : "Request received successfully");
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      
     } catch (error: any) {
-      console.error("Submission error:", error);
-      toast.error(isRtl ? "حدث خطأ أثناء الإرسال: " + (error.message || "خطأ غير معروف") : "Error during submission: " + (error.message || "Unknown error"));
+      console.error("Final submission error:", error);
+      toast.error(isRtl 
+        ? "حدث خطأ أثناء الإرسال، يرجى المحاولة مرة أخرى أو التواصل معنا عبر الواتساب." 
+        : "Error during submission, please try again or contact us via WhatsApp.");
     } finally {
       setLoading(false);
     }
@@ -193,6 +141,7 @@ const FingerprintBooking: React.FC = () => {
     window.print();
   };
 
+  // واجهة عرض الإيصال بعد النجاح
   if (submitted && orderData) {
     return (
       <div className="min-h-screen pb-20 font-arabic bg-muted/30" dir={isRtl ? 'rtl' : 'ltr'}>
@@ -216,12 +165,8 @@ const FingerprintBooking: React.FC = () => {
               </p>
             </div>
 
-            {/* Printable Receipt Card */}
             <Card className="rounded-[40px] border-none shadow-2xl overflow-hidden bg-white print:shadow-none print:border-2 print:border-primary print:rounded-none">
               <CardHeader className="bg-primary text-white p-10 text-center relative overflow-hidden print:bg-white print:text-black print:border-b-4 print:border-primary print:p-6">
-                <div className="absolute inset-0 opacity-10 print:hidden">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-secondary rounded-full blur-3xl -mr-32 -mt-32"></div>
-                </div>
                 <div className="relative z-10 space-y-4">
                   <div className="flex justify-center mb-4">
                     <div className="bg-secondary p-4 rounded-3xl print:hidden">
@@ -343,25 +288,16 @@ const FingerprintBooking: React.FC = () => {
                 </Button>
               </CardFooter>
             </Card>
-
-            <div className="text-center text-muted-foreground font-bold print:hidden">
-              <p>© {new Date().getFullYear()} {isRtl ? "جميع الحقوق محفوظة - شركة إنجاز" : "All Rights Reserved - Injaz Co."}</p>
-            </div>
           </motion.div>
         </div>
       </div>
     );
   }
 
+  // واجهة النموذج الأساسية
   return (
     <div className="min-h-screen pb-20 font-arabic bg-muted/30" dir={isRtl ? 'rtl' : 'ltr'}>
-      {/* Hero Section */}
       <div className="bg-primary text-white py-20 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-secondary rounded-full blur-3xl -ml-48 -mt-48"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary rounded-full blur-3xl -mr-48 -mb-48"></div>
-        </div>
-        
         <div className="container mx-auto px-4 relative z-10 text-center space-y-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -373,7 +309,6 @@ const FingerprintBooking: React.FC = () => {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
             className="text-5xl md:text-7xl font-black mb-4"
           >
             {isRtl ? "حجز المواعيد" : "Appointment Booking"}
@@ -381,7 +316,6 @@ const FingerprintBooking: React.FC = () => {
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
             className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium"
           >
             {isRtl 
@@ -393,7 +327,6 @@ const FingerprintBooking: React.FC = () => {
 
       <div className="container mx-auto px-4 -mt-10 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Form Side */}
           <div className="lg:col-span-2">
             <Card className="rounded-[40px] border-none shadow-2xl overflow-hidden bg-white">
               <form onSubmit={handleSubmit}>
@@ -545,7 +478,6 @@ const FingerprintBooking: React.FC = () => {
             </Card>
           </div>
 
-          {/* Info Side */}
           <div className="space-y-8">
             <Card className="rounded-[40px] border-none shadow-xl bg-white overflow-hidden">
               <CardHeader className="bg-secondary text-primary p-8">
@@ -573,30 +505,6 @@ const FingerprintBooking: React.FC = () => {
                     <p className="text-muted-foreground font-bold">{isRtl ? "مراجعة دقيقة للبيانات قبل الإرسال." : "Accurate data review before sending."}</p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="bg-secondary/20 p-3 rounded-2xl h-fit">
-                    <CreditCard className="text-primary" size={24} />
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-black mb-1">{isRtl ? "دفع آمن" : "Secure Payment"}</h4>
-                    <p className="text-muted-foreground font-bold">{isRtl ? "خيارات دفع متعددة وموثوقة." : "Multiple reliable payment options."}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-[40px] border-none shadow-xl bg-primary text-white overflow-hidden">
-              <CardContent className="p-8 space-y-4">
-                <p className="text-lg font-bold opacity-80">{isRtl ? "رسوم الخدمة" : "Service Fees"}</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-black text-secondary">15</span>
-                  <span className="text-xl font-bold">{isRtl ? "دينار / شخص" : "JOD / Person"}</span>
-                </div>
-                <p className="text-sm opacity-70 font-medium">
-                  {isRtl 
-                    ? "* الرسوم تشمل حجز الموعد والمراجعة الفنية للطلب." 
-                    : "* Fees include appointment booking and technical review."}
-                </p>
               </CardContent>
             </Card>
           </div>
