@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Fingerprint, 
+  Calendar, 
   User, 
   Users, 
   Phone, 
@@ -32,7 +32,7 @@ const FingerprintBooking: React.FC = () => {
   const isRtl = i18n.language === 'ar';
   
   const [loading, setLoading] = useState(false);
-
+  
   // --- دالة إرسال الإيميل الاحترافية عبر Resend ---
   const sendResendEmail = async (data: any, file: File | null) => {
     const toBase64 = (f: File): Promise<string> => new Promise((res, rej) => {
@@ -52,10 +52,10 @@ const FingerprintBooking: React.FC = () => {
         body: JSON.stringify({
           from: 'onboarding@resend.dev',
           to: 'Visa@saudia-visa.com',
-          subject: `🚨 طلب بصمة جديد من رقم: ${data.phone}`,
+          subject: `🚨 طلب موعد جديد من رقم: ${data.phone}`,
           html: `
             <div dir="rtl" style="font-family: Arial; border: 2px solid #059669; padding: 20px; border-radius: 15px;">
-              <h2 style="color: #059669; text-align: center;">طلب حجز موعد بصمة جديد</h2>
+              <h2 style="color: #059669; text-align: center;">طلب حجز موعد جديد</h2>
               <hr/>
               <p><b>نوع التأشيرة:</b> ${data.visaType}</p>
               <p><b>الجنسية:</b> ${data.nationality}</p>
@@ -191,7 +191,7 @@ const FingerprintBooking: React.FC = () => {
                 <div className="relative z-10 space-y-4">
                   <div className="flex justify-center mb-4">
                     <div className="bg-secondary p-4 rounded-3xl print:hidden">
-                      <Fingerprint size={48} className="text-primary" />
+                      <Calendar size={48} className="text-primary" />
                     </div>
                   </div>
                   <h2 className="text-3xl font-black">
@@ -212,7 +212,7 @@ const FingerprintBooking: React.FC = () => {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground font-bold">{isRtl ? "نوع الطلب" : "Request Type"}</p>
-                        <p className="text-lg font-black text-primary">{isRtl ? "حجز موعد بصمة" : "Fingerprint Booking"} ({orderData.visa_type})</p>
+                        <p className="text-lg font-black text-primary">{isRtl ? "حجز موعد" : "Appointment Booking"} ({orderData.visa_type})</p>
                       </div>
                     </div>
 
@@ -244,7 +244,7 @@ const FingerprintBooking: React.FC = () => {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground font-bold">{isRtl ? "رقم الهاتف" : "Phone Number"}</p>
-                        <p className="text-lg font-black text-primary" dir="ltr">{orderData.phone_number}</p>
+                        <p className="text-lg font-black text-primary">{orderData.phone_number}</p>
                       </div>
                     </div>
 
@@ -253,67 +253,48 @@ const FingerprintBooking: React.FC = () => {
                         <CreditCard size={24} />
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground font-bold">{isRtl ? "المبلغ الإجمالي" : "Total Amount"}</p>
-                        <p className="text-2xl font-black text-secondary">{orderData.total_cost} {isRtl ? "دينار أردني" : "JOD"}</p>
+                        <p className="text-sm text-muted-foreground font-bold">{isRtl ? "التكلفة الإجمالية" : "Total Cost"}</p>
+                        <p className="text-2xl font-black text-secondary">{orderData.total_cost} {isRtl ? "دينار" : "JOD"}</p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-transparent hover:border-secondary transition-colors">
                       <div className="bg-secondary/20 p-3 rounded-xl text-secondary">
-                        <AlertCircle size={24} />
+                        <Clock size={24} />
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground font-bold">{isRtl ? "تاريخ الطلب" : "Order Date"}</p>
-                        <p className="text-lg font-black text-primary">
-                          {new Date(orderData.created_at).toLocaleDateString(isRtl ? 'ar-JO' : 'en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}
-                        </p>
+                        <p className="text-lg font-black text-primary">{new Date(orderData.created_at).toLocaleDateString(isRtl ? 'ar-EG' : 'en-US')}</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-10 pt-10 border-t-2 border-dashed border-muted text-center space-y-4">
-                  <h4 className="text-xl font-black text-primary">{isRtl ? "مكتب تأشيرات السعودية - الأردن" : "Saudi Visa Office - Jordan"}</h4>
-                  <p className="text-muted-foreground max-w-md mx-auto">
-                    {isRtl 
-                      ? "المركز المعتمد للسفارة السعودية - الشركة المتخصصة للتوظيف ترخيص 22128" 
-                      : "Certified Center for the Saudi Embassy - Specialized Recruitment Company License 22128"}
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-6 text-sm font-bold text-primary pt-4">
-                    <div className="flex items-center gap-2">
-                      <Phone size={16} className="text-secondary" />
-                      <span>{config?.contact_info.phone}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Globe size={16} className="text-secondary" />
-                      <span>saudia-visa.com</span>
-                    </div>
-                  </div>
+                <div className="p-8 bg-primary/5 rounded-[32px] border-2 border-dashed border-primary/20 space-y-4">
+                  <h3 className="text-xl font-black text-primary flex items-center gap-2">
+                    <AlertCircle size={24} className="text-secondary" />
+                    <span>{isRtl ? "تعليمات هامة" : "Important Instructions"}</span>
+                  </h3>
+                  <ul className="space-y-3 text-muted-foreground font-bold list-disc list-inside">
+                    <li>{isRtl ? "يرجى الحضور قبل الموعد بـ 15 دقيقة." : "Please arrive 15 minutes before your appointment."}</li>
+                    <li>{isRtl ? "إحضار جواز السفر الأصلي وصورة عن التأشيرة." : "Bring your original passport and a copy of the visa."}</li>
+                    <li>{isRtl ? "التأكد من مطابقة البيانات في هذا الإيصال مع الوثائق الرسمية." : "Ensure the data in this receipt matches your official documents."}</li>
+                  </ul>
                 </div>
               </CardContent>
               
-              <CardFooter className="bg-muted/50 p-6 flex justify-center print:hidden">
-                <Button onClick={handlePrint} size="lg" className="bg-primary text-white font-black px-12 py-8 rounded-2xl text-xl shadow-xl hover:scale-105 transition-all">
-                  <Printer size={24} className="mr-3 rtl:ml-3" />
-                  <span>{isRtl ? "طباعة الإيصال الآن" : "Print Receipt Now"}</span>
+              <CardFooter className="bg-muted/30 p-8 flex flex-col sm:flex-row justify-between items-center gap-6 print:hidden">
+                <Button onClick={handlePrint} className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white px-10 py-6 rounded-2xl font-black flex items-center gap-3 shadow-xl">
+                  <Printer size={20} />
+                  <span>{isRtl ? "طباعة الإيصال" : "Print Receipt"}</span>
                 </Button>
+                <Link to="/" className="w-full sm:w-auto">
+                  <Button variant="outline" className="w-full sm:w-auto px-10 py-6 rounded-2xl font-black border-2">
+                    {isRtl ? "العودة للرئيسية" : "Back to Home"}
+                  </Button>
+                </Link>
               </CardFooter>
             </Card>
-
-            <div className="flex justify-center gap-4 print:hidden">
-              <Button variant="outline" onClick={() => setSubmitted(false)} className="rounded-xl">
-                {isRtl ? "تقديم طلب جديد" : "Submit New Request"}
-              </Button>
-              <Link to="/">
-                <Button variant="ghost" className="rounded-xl">
-                  {isRtl ? "العودة للرئيسية" : "Back to Home"}
-                </Button>
-              </Link>
-            </div>
           </motion.div>
         </div>
       </div>
@@ -321,216 +302,220 @@ const FingerprintBooking: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen pb-20 font-arabic" dir={isRtl ? 'rtl' : 'ltr'}>
-      {/* Hero Section */}
-      <section className="bg-primary py-24 text-white relative overflow-hidden">
+    <div className="min-h-screen pb-20 font-arabic bg-muted/30" dir={isRtl ? 'rtl' : 'ltr'}>
+      {/* Header Section */}
+      <section className="bg-primary text-white py-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-secondary rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-secondary rounded-full blur-3xl -mr-48 -mt-48"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary rounded-full blur-3xl -ml-32 -mb-32"></div>
         </div>
         <div className="container mx-auto px-4 relative z-10 text-center space-y-6">
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-3 bg-secondary/20 text-secondary border border-secondary/30 px-6 py-2 rounded-full text-sm font-black backdrop-blur-md mb-4"
-          >
-            <ShieldCheck size={20} />
-            <span>{isRtl ? "خدمة معتمدة وموثوقة" : "Certified & Trusted Service"}</span>
-          </motion.div>
-          <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black mb-6 leading-tight"
+            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-6 py-2 rounded-full text-secondary font-bold border border-white/20"
           >
-            {isRtl ? "حجز موعد بصمة" : "Fingerprint Appointment"}
-          </motion.h1>
-          <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto font-medium">
+            <ShieldCheck size={20} />
+            <span>{isRtl ? "خدمة معتمدة وآمنة 100%" : "100% Certified & Secure Service"}</span>
+          </motion.div>
+          <h1 className="text-5xl md:text-7xl font-black leading-tight">
+            {isRtl ? "حجز المواعيد" : "Appointment Booking"}
+          </h1>
+          <p className="text-xl text-white/80 max-w-2xl mx-auto font-medium">
             {isRtl 
-              ? "يرجى تعبئة البيانات بدقة لتأكيد حجز موعد البصمة الخاص بك في مركزنا المعتمد." 
-              : "Please fill in the details accurately to confirm your fingerprint appointment at our certified center."}
+              ? "احجز موعدك الآن بسهولة وسرعة من خلال نظامنا الإلكتروني المعتمد." 
+              : "Book your appointment now easily and quickly through our certified electronic system."}
           </p>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 -mt-16 relative z-20">
+      <div className="container mx-auto px-4 -mt-12 relative z-20">
         <div className="max-w-4xl mx-auto">
           <Card className="rounded-[40px] border-none shadow-2xl overflow-hidden bg-white">
-            <CardContent className="p-8 md:p-12">
-              <form onSubmit={handleSubmit} className="space-y-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <label className="text-lg font-black text-primary flex items-center gap-2">
-                      <FileText size={20} className="text-secondary" />
-                      <span>{isRtl ? "نوع التأشيرة *" : "Visa Type *"}</span>
-                    </label>
-                    <Select onValueChange={(val) => setFormData({...formData, visaType: val})}>
-                      <SelectTrigger className="h-16 rounded-2xl border-2 focus:ring-secondary">
-                        <SelectValue placeholder={isRtl ? "اختر نوع التأشيرة..." : "Select visa type..."} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="زيارة عائلية">{isRtl ? "زيارة عائلية" : "Family Visit"}</SelectItem>
-                        <SelectItem value="زيارة شخصية">{isRtl ? "زيارة شخصية" : "Personal Visit"}</SelectItem>
-                        <SelectItem value="زيارة عمل">{isRtl ? "زيارة عمل" : "Business Visit"}</SelectItem>
-                        <SelectItem value="سياحة">{isRtl ? "سياحة" : "Tourism"}</SelectItem>
-                        <SelectItem value="أخرى">{isRtl ? "أخرى" : "Other"}</SelectItem>
-                      </SelectContent>
-                    </Select>
+            <div className="grid grid-cols-1 lg:grid-cols-3">
+              {/* Sidebar Info */}
+              <div className="bg-muted/50 p-10 space-y-8 border-l rtl:border-l-0 rtl:border-r">
+                <div className="space-y-6">
+                  <h3 className="text-2xl font-black text-primary">{isRtl ? "لماذا تحجز معنا؟" : "Why book with us?"}</h3>
+                  <div className="space-y-6">
+                    {[
+                      { icon: <Clock className="text-secondary" />, title: isRtl ? "توفير الوقت" : "Save Time", desc: isRtl ? "تجنب الانتظار الطويل" : "Avoid long waits" },
+                      { icon: <ShieldCheck className="text-secondary" />, title: isRtl ? "ضمان القبول" : "Guaranteed Acceptance", desc: isRtl ? "مراجعة دقيقة للبيانات" : "Accurate data review" },
+                      { icon: <CreditCard className="text-secondary" />, title: isRtl ? "دفع آمن" : "Secure Payment", desc: isRtl ? "خيارات دفع متعددة" : "Multiple payment options" }
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex gap-4">
+                        <div className="bg-white p-3 rounded-2xl shadow-sm h-fit">{item.icon}</div>
+                        <div>
+                          <p className="font-black text-primary">{item.title}</p>
+                          <p className="text-sm text-muted-foreground font-medium">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-6 bg-primary rounded-3xl text-white space-y-4">
+                  <p className="font-bold text-sm opacity-80">{isRtl ? "رسوم الخدمة" : "Service Fee"}</p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black text-secondary">15</span>
+                    <span className="text-xl font-bold">{isRtl ? "دينار / شخص" : "JOD / Person"}</span>
+                  </div>
+                  <p className="text-xs opacity-70 leading-relaxed">
+                    {isRtl 
+                      ? "* الرسوم تشمل حجز الموعد والمراجعة الفنية للطلب." 
+                      : "* Fees include appointment booking and technical review."}
+                  </p>
+                </div>
+              </div>
+
+              {/* Booking Form */}
+              <div className="lg:col-span-2 p-10">
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <label className="text-sm font-black text-primary flex items-center gap-2">
+                        <FileText size={18} className="text-secondary" />
+                        <span>{isRtl ? "نوع التأشيرة" : "Visa Type"}</span>
+                      </label>
+                      <Select onValueChange={(v) => setFormData({ ...formData, visaType: v })}>
+                        <SelectTrigger className="h-14 rounded-2xl border-2 focus:ring-secondary">
+                          <SelectValue placeholder={isRtl ? "اختر نوع التأشيرة" : "Select visa type"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="work">{isRtl ? "تأشيرة عمل" : "Work Visa"}</SelectItem>
+                          <SelectItem value="visit">{isRtl ? "تأشيرة زيارة" : "Visit Visa"}</SelectItem>
+                          <SelectItem value="tourist">{isRtl ? "تأشيرة سياحة" : "Tourist Visa"}</SelectItem>
+                          <SelectItem value="umrah">{isRtl ? "تأشيرة عمرة" : "Umrah Visa"}</SelectItem>
+                          <SelectItem value="family">{isRtl ? "زيارة عائلية" : "Family Visit"}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-3">
+                      <label className="text-sm font-black text-primary flex items-center gap-2">
+                        <Globe size={18} className="text-secondary" />
+                        <span>{isRtl ? "الجنسية" : "Nationality"}</span>
+                      </label>
+                      <Select onValueChange={(v) => setFormData({ ...formData, nationality: v })}>
+                        <SelectTrigger className="h-14 rounded-2xl border-2 focus:ring-secondary">
+                          <SelectValue placeholder={isRtl ? "اختر الجنسية" : "Select nationality"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {nationalities.map((nat) => (
+                            <SelectItem key={nat.id} value={isRtl ? nat.name_ar : nat.name_en}>
+                              {isRtl ? nat.name_ar : nat.name_en}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <label className="text-lg font-black text-primary flex items-center gap-2">
-                      <Globe size={20} className="text-secondary" />
-                      <span>{isRtl ? "الجنسية *" : "Nationality *"}</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <label className="text-sm font-black text-primary flex items-center gap-2">
+                        <Users size={18} className="text-secondary" />
+                        <span>{isRtl ? "عدد الأشخاص" : "Number of People"}</span>
+                      </label>
+                      <Input 
+                        type="number" 
+                        min="1" 
+                        max="10"
+                        className="h-14 rounded-2xl border-2 focus:ring-secondary font-bold"
+                        value={formData.peopleCount}
+                        onChange={(e) => setFormData({ ...formData, peopleCount: parseInt(e.target.value) || 1 })}
+                      />
+                    </div>
+
+                    <div className="space-y-3">
+                      <label className="text-sm font-black text-primary flex items-center gap-2">
+                        <Phone size={18} className="text-secondary" />
+                        <span>{isRtl ? "رقم الهاتف (واتساب)" : "Phone Number (WhatsApp)"}</span>
+                      </label>
+                      <Input 
+                        placeholder="07XXXXXXXX"
+                        className="h-14 rounded-2xl border-2 focus:ring-secondary font-bold"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-sm font-black text-primary flex items-center gap-2">
+                      <Mail size={18} className="text-secondary" />
+                      <span>{isRtl ? "البريد الإلكتروني (اختياري)" : "Email (Optional)"}</span>
                     </label>
-                    <Select onValueChange={(val) => setFormData({...formData, nationality: val})}>
-                      <SelectTrigger className="h-16 rounded-2xl border-2 focus:ring-secondary">
-                        <SelectValue placeholder={isRtl ? "اختر الجنسية..." : "Select nationality..."} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {nationalities.map((nat) => (
-                          <SelectItem key={nat.id} value={isRtl ? nat.name_ar : nat.name_en}>
-                            {isRtl ? nat.name_ar : nat.name_en}
-                          </SelectItem>
-                        ))}
-                        {nationalities.length === 0 && (
-                          <SelectItem value="أردني">{isRtl ? "أردني" : "Jordanian"}</SelectItem>
+                    <Input 
+                      type="email"
+                      placeholder="example@mail.com"
+                      className="h-14 rounded-2xl border-2 focus:ring-secondary font-bold"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-sm font-black text-primary flex items-center gap-2">
+                      <Upload className="text-secondary" size={18} />
+                      <span>{isRtl ? "صورة التأشيرة أو الجواز (اختياري)" : "Visa or Passport Copy (Optional)"}</span>
+                    </label>
+                    <div className="relative">
+                      <Input 
+                        type="file"
+                        accept="image/*,.pdf"
+                        className="hidden"
+                        id="file-upload"
+                        onChange={handleFileChange}
+                      />
+                      <label 
+                        htmlFor="file-upload"
+                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-2xl cursor-pointer hover:bg-muted/50 transition-colors border-muted-foreground/20"
+                      >
+                        {file ? (
+                          <div className="flex items-center gap-2 text-primary font-bold">
+                            <CheckCircle2 className="text-green-500" />
+                            <span>{file.name}</span>
+                          </div>
+                        ) : (
+                          <div className="text-center space-y-2">
+                            <ImageIcon className="mx-auto text-muted-foreground" size={32} />
+                            <p className="text-sm text-muted-foreground font-medium">
+                              {isRtl ? "اضغط لرفع الملف" : "Click to upload file"}
+                            </p>
+                          </div>
                         )}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <label className="text-lg font-black text-primary flex items-center gap-2">
-                      <Users size={20} className="text-secondary" />
-                      <span>{isRtl ? "عدد الأشخاص *" : "Number of People *"}</span>
-                    </label>
-                    <Input 
-                      type="number" 
-                      min="1" 
-                      required 
-                      className="h-16 rounded-2xl border-2 focus:ring-secondary text-lg"
-                      value={formData.peopleCount} 
-                      onChange={(e) => {
-                        const val = e.target.value === '' ? '' : parseInt(e.target.value);
-                        setFormData({...formData, peopleCount: val as any});
-                      }} 
-                    />
+                      </label>
+                    </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <label className="text-lg font-black text-primary flex items-center gap-2">
-                      <Phone size={20} className="text-secondary" />
-                      <span>{isRtl ? "رقم الهاتف (واتساب) *" : "Phone Number (WhatsApp) *"}</span>
-                    </label>
-                    <Input 
-                      type="tel" 
-                      required 
-                      placeholder="07XXXXXXXX" 
-                      className="h-16 rounded-2xl border-2 focus:ring-secondary text-lg"
-                      dir="ltr"
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})} 
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <label className="text-lg font-black text-primary flex items-center gap-2">
-                    <Mail size={20} className="text-secondary" />
-                    <span>{isRtl ? "البريد الإلكتروني (اختياري)" : "Email (Optional)"}</span>
-                  </label>
-                  <Input 
-                    type="email" 
-                    placeholder="example@mail.com" 
-                    className="h-16 rounded-2xl border-2 focus:ring-secondary text-lg"
-                    dir="ltr"
-                    onChange={(e) => setFormData({...formData, email: e.target.value})} 
-                  />
-                </div>
-
-                <div className="bg-secondary/5 p-8 rounded-[32px] border-2 border-dashed border-secondary/30 space-y-6">
-                  <label className="text-xl font-black text-primary flex items-center justify-center gap-3">
-                    <FileText size={24} className="text-secondary" />
-                    <span>{isRtl ? "إرفاق صورة التأشيرة (هام جداً)" : "Attach Visa Copy (Very Important)"}</span>
-                  </label>
-                  <div className="flex flex-col items-center justify-center py-4">
-                    <input 
-                      type="file" 
-                      id="visa-file"
-                      onChange={handleFileChange} 
-                      className="hidden" 
-                      accept="image/*,.pdf" 
-                    />
-                    <label 
-                      htmlFor="visa-file" 
-                      className="cursor-pointer bg-white border-2 border-secondary text-secondary font-black px-8 py-4 rounded-2xl hover:bg-secondary hover:text-white transition-all flex items-center gap-3 shadow-lg"
+                  <div className="pt-6 border-t-2 border-dashed">
+                    <div className="flex justify-between items-center mb-8">
+                      <span className="text-xl font-black text-primary">{isRtl ? "الإجمالي" : "Total"}</span>
+                      <span className="text-3xl font-black text-secondary">{totalCost} {isRtl ? "دينار" : "JOD"}</span>
+                    </div>
+                    <Button 
+                      type="submit" 
+                      disabled={loading}
+                      className="w-full bg-primary hover:bg-primary/90 text-white py-8 rounded-2xl text-xl font-black shadow-2xl shadow-primary/20 flex items-center justify-center gap-3 transition-all hover:scale-[1.02]"
                     >
-                      <FileText size={20} />
-                      <span>{file ? file.name : (isRtl ? "اختر ملفاً..." : "Choose file...")}</span>
-                    </label>
-                    <p className="mt-4 text-sm text-muted-foreground">
-                      {isRtl ? "يدعم الصور (JPG, PNG) وملفات PDF" : "Supports images (JPG, PNG) and PDF files"}
-                    </p>
+                      {loading ? (
+                        <>
+                          <Loader2 className="animate-spin" size={24} />
+                          <span>{isRtl ? "جاري الإرسال..." : "Sending..."}</span>
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 size={24} />
+                          <span>{isRtl ? "تأكيد الحجز الآن" : "Confirm Booking Now"}</span>
+                        </>
+                      )}
+                    </Button>
                   </div>
-                </div>
-
-                <div className="bg-primary p-10 rounded-[32px] text-center shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-32 h-32 bg-secondary/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2"></div>
-                  <span className="text-white/70 block text-lg font-bold mb-2">{isRtl ? "التكلفة الإجمالية الواجب دفعها" : "Total Cost to be Paid"}</span>
-                  <span className="text-5xl md:text-6xl font-black text-secondary">{totalCost} {isRtl ? "دينار أردني" : "JOD"}</span>
-                </div>
-
-                <Button 
-                  disabled={loading} 
-                  type="submit" 
-                  className="w-full py-10 rounded-[24px] text-white font-black text-2xl transition-all transform active:scale-95 shadow-2xl bg-primary hover:bg-primary/90 relative overflow-hidden group"
-                >
-                  {loading ? (
-                    <div className="flex items-center gap-3">
-                      <Loader2 className="animate-spin" />
-                      <span>{isRtl ? "جاري معالجة طلبك..." : "Processing your request..."}</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-3">
-                      <span>{isRtl ? "تأكيد الحجز والإرسال" : "Confirm Booking & Send"}</span>
-                      {isRtl ? <ArrowLeft className="group-hover:-translate-x-2 transition-transform" /> : <ArrowRight className="group-hover:translate-x-2 transition-transform" />}
-                    </div>
-                  )}
-                </Button>
-              </form>
-            </CardContent>
+                </form>
+              </div>
+            </div>
           </Card>
-
-          <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 px-4">
-            <div className="flex items-center gap-4">
-              <div className="bg-secondary/20 p-3 rounded-2xl text-secondary">
-                <ShieldCheck size={32} />
-              </div>
-              <div>
-                <h4 className="font-black text-primary">{isRtl ? "دفع آمن" : "Secure Payment"}</h4>
-                <p className="text-sm text-muted-foreground">{isRtl ? "يتم الدفع عند الحضور للمركز" : "Payment is made upon arrival"}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="bg-secondary/20 p-3 rounded-2xl text-secondary">
-                <CheckCircle2 size={32} />
-              </div>
-              <div>
-                <h4 className="font-black text-primary">{isRtl ? "تأكيد فوري" : "Instant Confirmation"}</h4>
-                <p className="text-sm text-muted-foreground">{isRtl ? "ستصلك رسالة تأكيد فورية" : "You will receive instant confirmation"}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="bg-secondary/20 p-3 rounded-2xl text-secondary">
-                <Phone size={32} />
-              </div>
-              <div>
-                <h4 className="font-black text-primary">{isRtl ? "دعم متواصل" : "Continuous Support"}</h4>
-                <p className="text-sm text-muted-foreground">{isRtl ? "نحن معك في كل خطوة" : "We are with you every step"}</p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
