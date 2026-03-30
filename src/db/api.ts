@@ -118,7 +118,7 @@ export const db = {
     if (uploadError) return { data: null, error: uploadError };
 
     const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
-    return { data: data.publicUrl, error: null };
+    return { data: { publicUrl: data.publicUrl }, error: null };
   }
 };
 
