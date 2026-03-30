@@ -67,15 +67,15 @@ const Home: React.FC = () => {
       const news = await db.getNews();
       const blog = await db.getBlogPosts();
       const settings = await db.getSettings('site_config');
-      const faqData = await getFaqs();
-      const testimonialData = await getTestimonials();
+      const faqData = await db.getFaqs();
+      const testimonialData = await db.getTestimonials();
 
       setFeaturedServices(services.data || []);
       setLatestNews((news.data || []).slice(0, 3));
       setLatestBlog((blog.data || []).slice(0, 3));
       setConfig(settings.data);
-      setFaqs(faqData || []);
-      setTestimonials(testimonialData || []);
+      setFaqs(faqData.data || []);
+      setTestimonials(testimonialData.data || []);
     };
     fetchData();
   }, []);
@@ -339,7 +339,7 @@ const Home: React.FC = () => {
                </p>
                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
-                    isRtl ? "حجز مواعيد التأشيرات" : "Visa Appointment Booking",
+                    isRtl ? "حجز المواعيد" : "Book Appointments",
                     isRtl ? "تصديق الشهادات الجامعية" : "Degree Legalization",
                     isRtl ? "الاعتماد المهني السعودي" : "Saudi Prof. Accreditation",
                     isRtl ? "مصادقة السعودي (نفاذ)" : "Saudi Authentication (Nafath)",
